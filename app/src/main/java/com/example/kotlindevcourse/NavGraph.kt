@@ -23,7 +23,7 @@ fun SetupNavGraph(
         }
 
         composable(
-            route = Screen.Overview.route
+            route = Screen.UserProfile.route
         ){
 
 //            MainActivity()
