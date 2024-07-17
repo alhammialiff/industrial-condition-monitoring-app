@@ -49,10 +49,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(navController: NavController) {
 
     Scaffold(
 
@@ -167,6 +169,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             val screenHeight: Dp = configuration.screenHeightDp.dp
 
             BodyContent(
+                navController = navController,
                 width = screenWidth,
                 height = screenHeight,
                 message = "Body Content",
@@ -352,6 +355,7 @@ fun OverviewNumberCard(
 //Composable Function that can be used by setContent()
 @Composable
 fun BodyContent(
+    navController: NavController,
     width: Dp,
     height: Dp,
     message: String,
@@ -385,7 +389,7 @@ fun BodyContent(
         )
 
         /* Quick Access Bar */
-        QuickAccessBar()
+        QuickAccessBar(navController = navController)
 
         HorizontalDivider(color = Color.Gray, thickness = 1.dp)
 
@@ -400,6 +404,7 @@ fun BodyContent(
 // This composable serves to hold quick access links
 @Composable
 fun QuickAccessBar(
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
 
@@ -413,25 +418,67 @@ fun QuickAccessBar(
     ) {
 
         // Instantiate array of icon images
-        var iconImages = arrayOf(
-            R.drawable.user_24,
-            R.drawable.envelope_24,
-            R.drawable.search_24,
-            R.drawable.settings_24,
-            R.drawable.calendar_24
-        )
+//        var iconImages = arrayOf(
+//            R.drawable.user_24,
+//            R.drawable.envelope_24,
+//            R.drawable.search_24,
+//            R.drawable.settings_24,
+//            R.drawable.calendar_24
+//        )
 
         // Iteratively renders QuickAccessButton
-        iconImages.forEach { image ->
+//        iconImages.forEach { image ->
+//
+//            // Equal-width containers for four Quick Access Buttons
+//            QuickAccessButton(
+//                navController = navController,
+//                iconImage = image,
+//                containerColor = Color.White,
+//                modifier = modifier.padding(5.dp)
+//            )
+//
+//        }
 
-            // Equal-width containers for four Quick Access Buttons
-            QuickAccessButton(
-                iconImage = image,
-                containerColor = Color.White,
-                modifier = modifier.padding(5.dp)
-            )
+        /* Quick Access: User Profile */
+        QuickAccessButton(
+            navController = navController,
+            iconImage = R.drawable.user_24,
+            containerColor = Color.White,
+            modifier = modifier.padding(5.dp),
+            route = Screen.UserProfile.route
+        )
 
-        }
+        /* Quick Access: Notification */
+        QuickAccessButton(
+            navController = navController,
+            iconImage = R.drawable.envelope_24,
+            containerColor = Color.White,
+            modifier = modifier.padding(5.dp)
+        )
+
+        /* Quick Access: Search Button */
+        QuickAccessButton(
+            navController = navController,
+            iconImage = R.drawable.search_24,
+            containerColor = Color.White,
+            modifier = modifier.padding(5.dp)
+        )
+
+        /* Quick Access: Schedule Button */
+        QuickAccessButton(
+            navController = navController,
+            iconImage = R.drawable.calendar_24,
+            containerColor = Color.White,
+            modifier = modifier.padding(5.dp)
+        )
+
+        /* Quick Access: Settings Button */
+        QuickAccessButton(
+            navController = navController,
+            iconImage = R.drawable.settings_24,
+            containerColor = Color.White,
+            modifier = modifier.padding(5.dp)
+        )
 
     }
 
@@ -440,9 +487,11 @@ fun QuickAccessBar(
 // This composable serves to render individual links
 @Composable
 fun QuickAccessButton(
+    navController: NavController,
     iconImage: Int,
     modifier: Modifier = Modifier,
     containerColor: Color = Color(0xff00A19B),
+    route: String = Screen.Home.route
 ) {
 
     // Quick Access Button here
@@ -450,7 +499,7 @@ fun QuickAccessButton(
         containerColor = Color(0xff00736f),
         contentColor = Color(0xffffffff),
         elevation = FloatingActionButtonDefaults.elevation(16.dp),
-        onClick = { /*TODO*/ },
+        onClick = { navController.navigate(route) },
         modifier = modifier.size(75.dp)
     ) {
 
@@ -470,5 +519,5 @@ fun QuickAccessButton(
 @Composable
 @Preview(showBackground = true)
 fun HomeScreenPreview(modifier: Modifier = Modifier) {
-    HomeScreen()
+    HomeScreen(navController = rememberNavController())
 }

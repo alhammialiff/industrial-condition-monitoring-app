@@ -683,7 +683,9 @@ fun BodyContentPreview() {
     val screenHeight: Dp = configuration.screenHeightDp.dp
 
     KotlinDevCourseTheme {
-        BodyContent(width = screenWidth,
+        BodyContent(
+            navController = rememberNavController(),
+            width = screenWidth,
             height = screenHeight,
             message = "Body Content",
             from = "Quick Access")

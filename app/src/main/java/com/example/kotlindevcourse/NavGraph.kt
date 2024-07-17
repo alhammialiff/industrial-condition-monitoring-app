@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 
+
+/* Think of it like an App Route Module */
 @Composable
 fun SetupNavGraph(
     navController: NavHostController
@@ -18,7 +20,8 @@ fun SetupNavGraph(
             route = Screen.Home.route
         ){
 
-            HomeScreen()
+            /* Stop here: Do I need to pass navController?*/
+            HomeScreen(navController = navController)
 
         }
 
@@ -27,6 +30,7 @@ fun SetupNavGraph(
         ){
 
 //            MainActivity()
+            UserProfileScreen()
 
         }
 
