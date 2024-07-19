@@ -6,36 +6,41 @@ import androidx.navigation.compose.*
 
 
 /* Think of it like an App Route Module */
+//@ExperimentalMaterialApi
 @Composable
-fun SetupNavGraph(
+fun RootNavGraph(
     navController: NavHostController
 ) {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        route = Graph.ROOT,
+        startDestination = Graph.HOME
+//        startDestination = Screen.Home.route
     ){
 
         composable(
             route = Screen.Home.route
         ){
 
-            /* Stop here: Do I need to pass navController?*/
             HomeScreen(navController = navController)
 
         }
 
-        composable(
-            route = Screen.UserProfile.route
-        ){
-
-//            MainActivity()
-            UserProfileScreen()
-
-        }
-
+//        composable(
+//            route = Screen.UserProfile.route
+//        ){
+//
+//            UserProfileScreen(navController = navController)
+//
+//        }
 
     }
 
 
+}
+
+object Graph {
+    const val ROOT = "root_graph"
+    const val HOME = "home_graph"
 }
