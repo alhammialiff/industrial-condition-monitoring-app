@@ -34,10 +34,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun UserProfileScreen(modifier: Modifier = Modifier) {
+fun UserProfileScreen(navController: NavHostController) {
 
     Scaffold(
 
@@ -76,7 +78,7 @@ fun UserProfileScreen(modifier: Modifier = Modifier) {
 
                     /* Back Arrow */
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { navController.popBackStack() },
                         colors = ButtonColors(
                             containerColor = Color(0xff00A19B),
                             disabledContainerColor = Color(0xff00A19B),
@@ -141,7 +143,7 @@ fun UserProfileScreen(modifier: Modifier = Modifier) {
         ) {
 
 
-            UserProfileContainer(modifier = modifier)
+            UserProfileContainer(modifier = Modifier)
 
 
         }
@@ -272,6 +274,6 @@ fun UserProfileContainer(
 @Preview(showBackground = true)
 fun UserProfileScreenPreview(modifier: Modifier = Modifier){
 
-    UserProfileScreen()
+    UserProfileScreen(navController = rememberNavController())
 
 }

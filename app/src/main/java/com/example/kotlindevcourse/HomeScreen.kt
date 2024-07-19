@@ -1,5 +1,6 @@
 package com.example.kotlindevcourse
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,15 +11,22 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.TabRowDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -50,15 +58,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    onUserProfileButtonClicked: () -> Unit,
+    onNotificationButtonClicked: () -> Unit
+) {
 
     Scaffold(
 
         topBar = {
+
             TopAppBar(
 
                 colors = topAppBarColors(
@@ -74,8 +90,13 @@ fun HomeScreen(navController: NavController) {
                 }
 
             )
+
         },
         bottomBar = {
+
+            /* From-scratch Bottom Bar */
+            /*BottomBar(navController = navController)*/
+
             BottomAppBar(
                 containerColor = Color(0xff00A19B),
                 contentColor = MaterialTheme.colorScheme.primary
@@ -91,9 +112,9 @@ fun HomeScreen(navController: NavController) {
                     val forwardArrowIconImage = R.drawable.arrow_forward
                     val menuIconImage = R.drawable.menu
 
-                    /* Back Arrow */
+                    /*Back Arrow */
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = onUserProfileButtonClicked,
                         colors = ButtonColors(
                             containerColor = Color(0xff00A19B),
                             disabledContainerColor = Color(0xff00A19B),
@@ -110,7 +131,7 @@ fun HomeScreen(navController: NavController) {
 
                     }
 
-                    /* Menu Arrow */
+                     /*Menu Arrow*/
                     Button(
                         onClick = { /*TODO*/ },
                         colors = ButtonColors(
@@ -148,12 +169,6 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
 
-//                            Text(
-//                                modifier = Modifier
-//                                    .fillMaxWidth()~,
-//                                textAlign = TextAlign.Center,
-//                                text = "Dumb App Inc."
-//                            )
 
             }
         }
@@ -169,7 +184,8 @@ fun HomeScreen(navController: NavController) {
             val screenHeight: Dp = configuration.screenHeightDp.dp
 
             BodyContent(
-                navController = navController,
+                onUserProfileButtonClicked = onUserProfileButtonClicked,
+                onNotificationButtonClicked = onNotificationButtonClicked,
                 width = screenWidth,
                 height = screenHeight,
                 message = "Body Content",
@@ -219,6 +235,8 @@ fun OverviewSectionGroup(fieldTaskViewModel: FieldTasksViewModel = viewModel()) 
     OverviewSection(
         numOfOutstandingTasks = numOfOutstandingTasks
     )
+
+
 
 }
 
@@ -355,7 +373,8 @@ fun OverviewNumberCard(
 //Composable Function that can be used by setContent()
 @Composable
 fun BodyContent(
-    navController: NavController,
+    onUserProfileButtonClicked: () -> Unit,
+    onNotificationButtonClicked: () -> Unit,
     width: Dp,
     height: Dp,
     message: String,
@@ -389,11 +408,20 @@ fun BodyContent(
         )
 
         /* Quick Access Bar */
-        QuickAccessBar(navController = navController)
+        QuickAccessBar(
+            onUserProfileButtonClicked = onUserProfileButtonClicked,
+            onNotificationButtonClicked = onNotificationButtonClicked
+        )
 
         HorizontalDivider(color = Color.Gray, thickness = 1.dp)
 
         OverviewSectionGroup()
+
+        TabContainer(
+            selectedTabIndex = 1,
+            divider = {},
+            modifier = modifier
+        )
 
 
     }
@@ -404,7 +432,8 @@ fun BodyContent(
 // This composable serves to hold quick access links
 @Composable
 fun QuickAccessBar(
-    navController: NavController,
+    onUserProfileButtonClicked: () -> Unit,
+    onNotificationButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -441,16 +470,15 @@ fun QuickAccessBar(
 
         /* Quick Access: User Profile */
         QuickAccessButton(
-            navController = navController,
+            onClick = onUserProfileButtonClicked,
             iconImage = R.drawable.user_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp),
-            route = Screen.UserProfile.route
         )
 
         /* Quick Access: Notification */
         QuickAccessButton(
-            navController = navController,
+            onClick = onNotificationButtonClicked,
             iconImage = R.drawable.envelope_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp)
@@ -458,7 +486,7 @@ fun QuickAccessBar(
 
         /* Quick Access: Search Button */
         QuickAccessButton(
-            navController = navController,
+            onClick = {},
             iconImage = R.drawable.search_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp)
@@ -466,7 +494,7 @@ fun QuickAccessBar(
 
         /* Quick Access: Schedule Button */
         QuickAccessButton(
-            navController = navController,
+            onClick = {},
             iconImage = R.drawable.calendar_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp)
@@ -474,7 +502,7 @@ fun QuickAccessBar(
 
         /* Quick Access: Settings Button */
         QuickAccessButton(
-            navController = navController,
+            onClick = {},
             iconImage = R.drawable.settings_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp)
@@ -487,11 +515,10 @@ fun QuickAccessBar(
 // This composable serves to render individual links
 @Composable
 fun QuickAccessButton(
-    navController: NavController,
+    onClick: () -> Unit,
     iconImage: Int,
     modifier: Modifier = Modifier,
-    containerColor: Color = Color(0xff00A19B),
-    route: String = Screen.Home.route
+    containerColor: Color = Color(0xff00A19B)
 ) {
 
     // Quick Access Button here
@@ -499,7 +526,7 @@ fun QuickAccessButton(
         containerColor = Color(0xff00736f),
         contentColor = Color(0xffffffff),
         elevation = FloatingActionButtonDefaults.elevation(16.dp),
-        onClick = { navController.navigate(route) },
+        onClick = onClick,
         modifier = modifier.size(75.dp)
     ) {
 
@@ -515,9 +542,112 @@ fun QuickAccessButton(
 }
 
 
+/* Custom Tab Container Composable */
+@Composable
+fun TabContainer(
+    selectedTabIndex: Any,
+    divider: Any,
+    modifier: Modifier = Modifier
+) {
+
+    val dummyTabLabels = listOf<String>(
+        "Outstanding",
+        "Completed"
+    )
+
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = modifier
+            .padding(20.dp)
+            .fillMaxWidth()
+    ){
+
+        dummyTabLabels.forEachIndexed { index, tabLabel ->
+
+            Tab(
+                tabIndex = index + 1,
+                tabLabel = tabLabel
+            )
+
+        }
+
+    }
+
+}
+
+/* Custom Tab Composable */
+@Composable
+fun Tab(
+    tabIndex: Int = 0,
+    tabLabel: String = "Tab Label",
+    modifier: Modifier = Modifier
+) {
+    
+    Text(
+        text = tabLabel
+    )
+    
+}
+
+/*@Composable
+fun BottomBar(navController: NavController){
+    val screens = listOf(
+        BottomBarScreen.Back,
+        BottomBarScreen.Home,
+        BottomBarScreen.Forward
+    )
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    var currentDestination = navBackStackEntry?.destination
+
+    BottomNavigation{
+
+        screens.forEach{ screen ->
+            AddItem(
+                screen = screen,
+                currentDestination = currentDestination,
+                navController = navController
+            )
+        }
+    }
+}
+
+@Composable
+fun RowScope.AddItem(
+    screen: BottomBarScreen,
+    currentDestination: NavDestination?,
+    navController: NavController
+) {
+
+    BottomNavigationItem(
+        label = {
+            Text(text = screen.title)
+        },
+        icon = {
+            Icon(
+                imageVector = screen.icon,
+                contentDescription = "Navigation Icon"
+            )
+        },
+
+        *//* If current destination in record (hierarchy) is equal
+           to one of the screen routes, deem it as selected *//*
+        selected = currentDestination?.hierarchy?.any{
+            it.route == screen.route
+        } == true,
+        onClick = {
+            navController.navigate(screen.route)
+        }
+    )
+
+}*/
+
+
 
 @Composable
 @Preview(showBackground = true)
 fun HomeScreenPreview(modifier: Modifier = Modifier) {
-    HomeScreen(navController = rememberNavController())
+    HomeScreen(
+        onUserProfileButtonClicked = {},
+        onNotificationButtonClicked = {}
+    )
 }

@@ -66,7 +66,8 @@ dependencies {
 //    implementation(libs.androidx.navigation.safe.args.gradle.plugin)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.androidx.navigation.compose) //
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.material) //
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
