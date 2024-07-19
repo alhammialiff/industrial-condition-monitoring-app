@@ -543,6 +543,7 @@ fun QuickAccessButton(
 
 
 /* Custom Tab Container Composable */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TabContainer(
     selectedTabIndex: Any,
@@ -555,7 +556,7 @@ fun TabContainer(
         "Completed"
     )
 
-    Row(
+    FlowRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier
             .padding(20.dp)
@@ -582,10 +583,16 @@ fun Tab(
     tabLabel: String = "Tab Label",
     modifier: Modifier = Modifier
 ) {
-    
-    Text(
-        text = tabLabel
-    )
+    Button(
+        onClick = {},
+        modifier = modifier.width(170.dp)
+    ){
+        Text(
+            text = tabLabel,
+            modifier = modifier
+        )
+    }
+
     
 }
 
