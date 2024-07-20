@@ -40,6 +40,9 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -541,6 +544,64 @@ fun QuickAccessButton(
 
 }
 
+/*
+* Custom Tab Functions & Class
+* */
+class TabViewModel: ViewModel(){
+
+    /* Outstanding Tab Selected State */
+    private val _isOutstandingTabSelected: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isOutstandingTabSelected: LiveData<Boolean> = _isOutstandingTabSelected
+
+    /* Completed Tab Selected State */
+    private val _isCompletedTabSelected: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isCompletedTabSelected: LiveData<Boolean> = _isCompletedTabSelected
+
+    /* Tab Selected Events -
+    * Need both states to toggle with one another
+    * */
+
+    /* Outstanding Tab Selected State Handler */
+    fun onOutstandingTabSelected(){
+
+        if(_isOutstandingTabSelected.value == false){
+
+            _isOutstandingTabSelected.value = true
+            _isCompletedTabSelected.value = false
+
+        }else{
+
+            _isOutstandingTabSelected.value = false
+            _isCompletedTabSelected.value = true
+
+        }
+
+        Log.d("[Tab Selected]", "$_isOutstandingTabSelected.value")
+
+    }
+
+    /* Completed Tab Selected State Handler */
+    fun onCompletedTabSelected(){
+
+        if(_isCompletedTabSelected.value == false){
+
+            _isCompletedTabSelected.value = true
+            _isOutstandingTabSelected.value = false
+
+
+        }else{
+
+            _isCompletedTabSelected.value = false
+            _isOutstandingTabSelected.value = true
+
+
+        }
+
+        Log.d("[Tab Selected]", "$_isCompletedTabSelected.value")
+
+    }
+
+}
 
 /* Custom Tab Container Composable */
 @OptIn(ExperimentalLayoutApi::class)
@@ -548,8 +609,13 @@ fun QuickAccessButton(
 fun TabContainer(
     selectedTabIndex: Any,
     divider: Any,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    tabViewModel: TabViewModel = viewModel()
 ) {
+
+    /* Hoisting state (isSelected) */
+    val isOutstandingTabSelected by tabViewModel.isOutstandingTabSelected.observeAsState(initial = false)
+    val isCompletedTabSelected by tabViewModel.isCompletedTabSelected.observeAsState(initial = false)
 
     val dummyTabLabels = listOf<String>(
         "Outstanding",
@@ -565,10 +631,31 @@ fun TabContainer(
 
         dummyTabLabels.forEachIndexed { index, tabLabel ->
 
-            Tab(
-                tabIndex = index + 1,
-                tabLabel = tabLabel
-            )
+            if( tabLabel == "Outstanding"){
+
+                /* Outstanding Tab */
+                Tab(
+                    tabIndex = index + 1,
+                    tabLabel = tabLabel,
+                    isSelected = isOutstandingTabSelected,
+                    onTabSelected = { tabViewModel.onOutstandingTabSelected() }
+                )
+
+            }else{
+
+                /* Completed Tab */
+                Tab(
+                    tabIndex = index + 1,
+                    tabLabel = tabLabel,
+                    isSelected = isCompletedTabSelected,
+                    onTabSelected = { tabViewModel.onCompletedTabSelected() }
+                )
+
+            }
+
+
+
+
 
         }
 
@@ -577,18 +664,33 @@ fun TabContainer(
 }
 
 /* Custom Tab Composable */
+/* Remember: Composable should be stateless, to send these states down to Tab -:
+*   (1) Select state (boolean)
+*     - Change Tab colour when selected, grey it out when not
+*  */
 @Composable
 fun Tab(
     tabIndex: Int = 0,
     tabLabel: String = "Tab Label",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSelected: Boolean,
+    onTabSelected: () -> Unit
 ) {
+
+
+    Log.d("[Tab Selected]", "$onTabSelected")
+
     Button(
-        onClick = {},
+        onClick = onTabSelected,
         modifier = modifier.width(170.dp)
     ){
         Text(
             text = tabLabel,
+            modifier = modifier
+        )
+
+        Text(
+            text= " $isSelected",
             modifier = modifier
         )
     }
