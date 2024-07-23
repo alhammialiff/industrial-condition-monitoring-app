@@ -4,18 +4,13 @@ import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,9 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.TabRowDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -34,38 +26,35 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import java.lang.reflect.Field
+import java.util.Date
+import java.util.concurrent.Flow
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -427,6 +416,8 @@ fun BodyContent(
         )
 
 
+
+
     }
 
 
@@ -545,6 +536,113 @@ fun QuickAccessButton(
 }
 
 /*
+*  Tasks View Model
+* */
+class TasksViewModel: ViewModel(){
+
+    /* Dummy Data Function for now */
+    var fieldTaskList = TaskList(
+
+        mutableListOf(
+
+            FieldTask(
+                "Lube Oil Change",
+                "23/07/2024",
+                "Area A-2",
+                "high",
+                "Area B-4",
+                false
+            ),
+            FieldTask(
+                "Lube Oil Change",
+                "23/07/2024",
+                "Area B-1",
+                "low",
+                "Area B-4",
+                false
+            ),
+            FieldTask(
+                "Lube Oil Change",
+                "23/07/2024",
+                "Area A-1",
+                "high",
+                "Area B-2",
+                false
+            )
+
+        )
+
+    )
+
+//    private var _taskMasterList: MutableState<TaskList> = MutableState()
+    var taskMasterList: TaskList = fieldTaskList
+
+    /* State handler to send initial data down to composable */
+    fun getInitTaskList(): TaskList{
+
+        return taskMasterList
+
+    }
+
+}
+
+
+/*
+*  [TO COMPARTMENTALISE]
+* */
+/* Task Class */
+data class FieldTask (
+
+    val action: String,
+    val timestamp: String,
+    val location: String,
+    val priority: String,
+    val taskFor: String,
+    val completed: Boolean
+
+)
+
+/* TaskList Class */
+open class TaskList {
+
+    var tasklist: MutableList<FieldTask>
+    var taskIndex: Int = 0
+
+    constructor(fieldTaskList: MutableList<FieldTask>) {
+
+        this.tasklist = fieldTaskList
+
+    }
+
+    /* TODO - Get task list */
+    /* Add Task */
+    fun getTask(): MutableList<FieldTask>{
+
+        Log.d("Task List getTask()", "Value - " + this.tasklist);
+
+        /* Add task */
+        return this.tasklist
+
+    }
+
+    /* Add Task */
+    fun setTask(fieldTask: FieldTask){
+
+        /* Add task */
+        this.tasklist.add(taskIndex, fieldTask)
+
+        /* Increment index after add */
+        this.taskIndex++
+
+    }
+
+    /* TODO - Remove task */
+
+    /* TODO - Update task */
+
+}
+
+/*
 * Custom Tab Functions & Class
 * */
 class TabViewModel: ViewModel(){
@@ -556,6 +654,7 @@ class TabViewModel: ViewModel(){
     /* Completed Tab Selected State */
     private val _isCompletedTabSelected: MutableLiveData<Boolean> = MutableLiveData(false)
     val isCompletedTabSelected: LiveData<Boolean> = _isCompletedTabSelected
+
 
     /* Tab Selected Events -
     * Need both states to toggle with one another
@@ -610,12 +709,19 @@ fun TabContainer(
     selectedTabIndex: Any,
     divider: Any,
     modifier: Modifier = Modifier,
-    tabViewModel: TabViewModel = viewModel()
+    tabViewModel: TabViewModel = viewModel(),
+    taskViewModel: TasksViewModel = viewModel()
 ) {
 
-    /* Hoisting state (isSelected) */
+    /* Hoisting state (isSelected)
+    *  Think of it like RXJS Subscription (Dynamic data stream)
+    *  */
     val isOutstandingTabSelected by tabViewModel.isOutstandingTabSelected.observeAsState(initial = false)
     val isCompletedTabSelected by tabViewModel.isCompletedTabSelected.observeAsState(initial = false)
+
+
+    val taskMasterList = taskViewModel.getInitTaskList()
+
 
     val dummyTabLabels = listOf<String>(
         "Outstanding",
@@ -629,6 +735,7 @@ fun TabContainer(
             .fillMaxWidth()
     ){
 
+        /* Tabs Button */
         dummyTabLabels.forEachIndexed { index, tabLabel ->
 
             if( tabLabel == "Outstanding"){
@@ -640,6 +747,8 @@ fun TabContainer(
                     isSelected = isOutstandingTabSelected,
                     onTabSelected = { tabViewModel.onOutstandingTabSelected() }
                 )
+
+
 
             }else{
 
@@ -653,11 +762,30 @@ fun TabContainer(
 
             }
 
+        }
 
 
+        var iterableTaskList = taskMasterList.getTask().listIterator()
+        var iterableIndex: Int = 1
 
+
+        for(task in iterableTaskList){
+
+            /* Tabs Contents */
+            TabContent(
+
+                canShowContent = isCompletedTabSelected,
+                task = task,
+                taskIndex = iterableIndex++
+
+            )
 
         }
+
+        iterableIndex = 0
+
+
+
 
     }
 
@@ -672,30 +800,168 @@ fun TabContainer(
 fun Tab(
     tabIndex: Int = 0,
     tabLabel: String = "Tab Label",
-    modifier: Modifier = Modifier,
     isSelected: Boolean,
-    onTabSelected: () -> Unit
+    onTabSelected: () -> Unit,
+    modifier: Modifier = Modifier.padding(
+        start = 0.dp,
+        top = 0.dp,
+        end = 0.dp,
+        bottom = 0.dp
+    )
 ) {
 
 
     Log.d("[Tab Selected]", "$onTabSelected")
-
-    Button(
-        onClick = onTabSelected,
-        modifier = modifier.width(170.dp)
+    Surface(
+        shadowElevation = 8.dp,
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier.padding(3.dp)
     ){
-        Text(
-            text = tabLabel,
-            modifier = modifier
-        )
 
-        Text(
-            text= " $isSelected",
-            modifier = modifier
-        )
+        Button(
+            onClick = onTabSelected,
+            shape = RoundedCornerShape(20.dp),
+            colors = ButtonColors(
+                containerColor = Color(0xff00736f),
+                contentColor = Color(0xffffffff),
+                disabledContentColor = Color(0xff00736f),
+                disabledContainerColor = Color(0xff00736f)),
+            modifier = Modifier
+                .width(195.dp)
+                .background(Color(0xff00736f), RoundedCornerShape(12.dp))
+        ){
+            Text(
+                text = tabLabel,
+                modifier = modifier
+            )
+
+            Text(
+                text= " $isSelected",
+                modifier = modifier
+            )
+        }
+
+
     }
 
+
     
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun TabContent(
+    canShowContent: Boolean,
+    task: FieldTask,
+    taskIndex: Int,
+    modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .border(
+            border = BorderStroke(2.dp, Color(0xfffffed4)),
+            shape = RoundedCornerShape(12.dp),
+        )
+        .background(Color(0xfffffed4), RoundedCornerShape(12.dp))
+        .padding(
+            5.dp,
+            5.dp,
+            5.dp,
+            5.dp
+        )
+){
+    Surface(
+        shadowElevation = 5.dp,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.padding(5.dp)
+    ) {
+
+        FlowColumn(
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier
+        ){
+
+            Text(
+                text = "#${taskIndex} ${task.action} (${task.priority})",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = modifier.padding(
+                    start = 20.dp,
+                    top = 10.dp,
+                    end = 0.dp,
+                    bottom = 0.dp
+                )
+            )
+
+//        Text(
+//            text = "${task.timestamp}",
+//            style = MaterialTheme.typography.titleSmall,
+//            modifier = modifier.padding(
+//                start = 20.dp,
+//                top = 0.dp,
+//                end = 0.dp,
+//                bottom = 0.dp
+//            )
+//        )
+
+            Text(
+                text = "Location ${task.location}",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = modifier.padding(
+                    start = 20.dp,
+                    top = 0.dp,
+                    end = 0.dp,
+                    bottom = 0.dp
+                )
+            )
+
+            Text(
+                text = "${task.taskFor}",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = modifier.padding(
+                    start = 20.dp,
+                    top = 0.dp,
+                    end = 0.dp,
+                    bottom = 0.dp
+                )
+            )
+
+            if(task.completed){
+
+                Text(
+                    text = "Completed",
+
+                    modifier = modifier.padding(
+                        start = 20.dp,
+                        top = 0.dp,
+                        end = 0.dp,
+                        bottom = 0.dp
+                    )
+                )
+
+            }else{
+
+                Text(
+                    text = "Incomplete",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = modifier.padding(
+                        start = 20.dp,
+                        top = 0.dp,
+                        end = 0.dp,
+                        bottom = 0.dp
+                    )
+                )
+
+            }
+
+//        }
+
+
+        }
+
+    }
+
+
+
+
+
 }
 
 /*@Composable
