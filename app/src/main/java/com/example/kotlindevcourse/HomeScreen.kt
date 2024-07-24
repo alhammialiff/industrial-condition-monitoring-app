@@ -1,6 +1,7 @@
 package com.example.kotlindevcourse
 
 import android.util.Log
+import android.view.ViewGroup
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -384,6 +385,12 @@ fun BodyContent(
         // horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .width(width)
+            .padding(
+                /* This padding is to offset BottomAppBar height so that
+                *  inner content is not hidden behind it when scrolled
+                * */
+                bottom = 35.dp
+            )
         // .background(Color(0xFFFFFFFF))
 
     ) {
@@ -735,7 +742,7 @@ fun TabContainer(
         modifier = modifier
             .padding(20.dp)
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
+//            .verticalScroll(rememberScrollState())
     ){
 
         /* Tabs Button */
@@ -771,19 +778,28 @@ fun TabContainer(
         var iterableTaskList = taskMasterList.getTask().listIterator()
         var iterableIndex: Int = 1
 
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
 
-        for(task in iterableTaskList){
+        ){
 
-            /* Tabs Contents */
-            TabContent(
+            for(task in iterableTaskList){
 
-                canShowContent = isCompletedTabSelected,
-                task = task,
-                taskIndex = iterableIndex++
+                /* Tabs Contents */
+                TabContent(
 
-            )
+                    canShowContent = isCompletedTabSelected,
+                    task = task,
+                    taskIndex = iterableIndex++
+
+                )
+
+            }
 
         }
+
+
 
         iterableIndex = 0
 
