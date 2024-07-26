@@ -48,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,6 +56,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.kotlindevcourse.navigation.HomeScreenNav
 import java.lang.reflect.Field
 import java.util.Date
 import java.util.concurrent.Flow
@@ -62,12 +68,15 @@ import java.util.concurrent.Flow
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+
     onUserProfileButtonClicked: () -> Unit,
     onNotificationButtonClicked: () -> Unit
 ) {
 
-    Scaffold(
 
+
+    Scaffold(
+        containerColor = Color.White,
         topBar = {
 
             TopAppBar(
@@ -109,7 +118,7 @@ fun HomeScreen(
 
                     /*Back Arrow */
                     Button(
-                        onClick = onUserProfileButtonClicked,
+                        onClick = { /*TODO*/ },
                         colors = ButtonColors(
                             containerColor = Color(0xff00A19B),
                             disabledContainerColor = Color(0xff00A19B),
@@ -161,6 +170,7 @@ fun HomeScreen(
                             contentDescription = "Quick Access Button Prototype",
                             modifier = Modifier.size(45.dp)
                         )
+
                     }
                 }
 
@@ -170,8 +180,14 @@ fun HomeScreen(
     ) {
 
             innerPadding ->
+
+        /*https://medium.com/@mathroda/nested-navigation-graph-in-jetpack-compose-with-bottom-navigation-d983c2d4119f*/
+
+
         Column(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxWidth()
         ) {
 
             val configuration = LocalConfiguration.current
@@ -179,8 +195,8 @@ fun HomeScreen(
             val screenHeight: Dp = configuration.screenHeightDp.dp
 
             BodyContent(
-                onUserProfileButtonClicked = onUserProfileButtonClicked,
-                onNotificationButtonClicked = onNotificationButtonClicked,
+                onUserProfileButtonClicked = onUserProfileButtonClicked ,
+                onNotificationButtonClicked = {  },
                 width = screenWidth,
                 height = screenHeight,
                 message = "Body Content",
@@ -243,15 +259,21 @@ fun OverviewSection(
 ) {
 
     FlowRow(
+        horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier
-            .padding(16.dp)
             .fillMaxWidth()
+            .padding(
+                16.dp,
+                16.dp,
+                16.dp,
+                8.dp
+            )
             /* Layout Guideline */
-            .border(
-                border = BorderStroke(0.dp, Color.LightGray),
-                shape = RectangleShape
-            ),
-        horizontalArrangement = Arrangement.SpaceEvenly
+//            .border(
+//                border = BorderStroke(0.dp, Color.LightGray),
+//                shape = RectangleShape
+//            ),
+
     ) {
 
         // Outstanding Tasks Number here
@@ -301,7 +323,7 @@ fun OverviewSection(
                 text = "2 isolation works",
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(0.dp, 8.dp, 0.dp, 8.dp)
+                    .padding(0.dp, 8.dp, 0.dp, 0.dp)
                     .border(
                         border = BorderStroke(1.dp, Color(0xffee87f5)),
                         shape = RoundedCornerShape(12.dp),
@@ -325,11 +347,11 @@ fun OverviewNumberCard(
 
     Column(
         modifier = Modifier
-            .border(
-                border = BorderStroke(2.dp, Color(0xff4370cf)),
-                shape = RoundedCornerShape(12.dp),
-            )
-            .background(Color(0xff4370cf), RoundedCornerShape(12.dp))
+//            .border(
+//                border = BorderStroke(2.dp, Color(0xff4370cf)),
+//                shape = RoundedCornerShape(12.dp),
+//            )
+            .background(Color(0xffffffff), RoundedCornerShape(12.dp))
             .padding(
                 60.dp,
                 20.dp
@@ -341,19 +363,19 @@ fun OverviewNumberCard(
         Text(
             text = "$numOfOutstandingTasks",
             fontWeight = FontWeight.ExtraBold,
-            fontSize = 80.sp,
+            fontSize = 60.sp,
             modifier = modifier,
             style = MaterialTheme.typography.headlineLarge,
-            color = Color.White
+            color = Color.Black
         )
 
         /* Define sub composables */
         Text(
             text = "tasks",
             fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp,
+            fontSize = 15.sp,
             style = MaterialTheme.typography.labelLarge,
-            color = Color.White
+            color = Color.Black
         )
 
 
@@ -384,37 +406,34 @@ fun BodyContent(
         // verticalArrangement = Arrangement.Center,
         // horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .width(width)
+//            .width(width)
             .padding(
                 /* This padding is to offset BottomAppBar height so that
                 *  inner content is not hidden behind it when scrolled
                 * */
                 bottom = 35.dp
             )
-        // .background(Color(0xFFFFFFFF))
 
     ) {
 
-        /* Quick Access Text */
-        Text(
-            text = from,
-            fontSize = 20.sp,
-            color = Color.Black,
-            textAlign = TextAlign.Start,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .width(width)
-                .padding(16.dp)
-            // .align(alignment = Alignment.End)
-        )
-
-        /* Quick Access Bar */
-        QuickAccessBar(
+        QuickAccessBarContainer(
             onUserProfileButtonClicked = onUserProfileButtonClicked,
-            onNotificationButtonClicked = onNotificationButtonClicked
+            onNotificationButtonClicked = onNotificationButtonClicked,
+            modifier = Modifier
+                .background(
+                    color = Color(0xff00A19B),
+                    shape = RoundedCornerShape(
+                        topStart = 0.dp,
+                        topEnd = 0.dp,
+                        bottomStart = 16.dp,
+                        bottomEnd = 16.dp
+                    )
+                )
+                .fillMaxWidth()
         )
 
-        HorizontalDivider(color = Color.Gray, thickness = 1.dp)
+
+        HorizontalDivider(color = Color(0xfff8f8f8), thickness = 1.dp)
 
         OverviewSectionGroup()
 
@@ -432,6 +451,39 @@ fun BodyContent(
 
 }
 
+@Composable
+fun QuickAccessBarContainer(
+    onUserProfileButtonClicked: () -> Unit,
+    onNotificationButtonClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+    /* Quick Access Text */
+//    Text(
+//        text = from,
+//        fontSize = 20.sp,
+//        color = Color.Black,
+//        textAlign = TextAlign.Start,
+//        fontWeight = FontWeight.Bold,
+//        modifier = Modifier
+//            .width(width)
+//            .padding(16.dp)
+//        // .align(alignment = Alignment.End)
+//    )
+    Column(
+        modifier = modifier
+    ) {
+
+        /* Quick Access Bar */
+        QuickAccessBar(
+            onUserProfileButtonClicked = onUserProfileButtonClicked,
+            onNotificationButtonClicked = onNotificationButtonClicked
+        )
+
+    }
+
+}
+
 // This composable serves to hold quick access links
 @Composable
 fun QuickAccessBar(
@@ -441,12 +493,15 @@ fun QuickAccessBar(
 ) {
 
     Row(
-        modifier = modifier.padding(
-            start = 12.dp,
-            top = 0.dp,
-            end = 0.dp,
-            bottom = 16.dp
-        )
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = modifier
+            .padding(
+                start = 12.dp,
+                top = 0.dp,
+                end = 12.dp,
+                bottom = 16.dp
+            )
+            .fillMaxWidth()
     ) {
 
         // Instantiate array of icon images
@@ -473,7 +528,12 @@ fun QuickAccessBar(
 
         /* Quick Access: User Profile */
         QuickAccessButton(
-            onClick = onUserProfileButtonClicked,
+            destination = {
+
+                onUserProfileButtonClicked.invoke()
+
+                Log.d("[Profile Clicked]","Clicked")
+            },
             iconImage = R.drawable.user_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp),
@@ -481,7 +541,7 @@ fun QuickAccessBar(
 
         /* Quick Access: Notification */
         QuickAccessButton(
-            onClick = onNotificationButtonClicked,
+            destination = onNotificationButtonClicked,
             iconImage = R.drawable.envelope_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp)
@@ -489,7 +549,7 @@ fun QuickAccessBar(
 
         /* Quick Access: Search Button */
         QuickAccessButton(
-            onClick = {},
+            destination = {},
             iconImage = R.drawable.search_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp)
@@ -497,7 +557,7 @@ fun QuickAccessBar(
 
         /* Quick Access: Schedule Button */
         QuickAccessButton(
-            onClick = {},
+            destination = {},
             iconImage = R.drawable.calendar_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp)
@@ -505,7 +565,7 @@ fun QuickAccessBar(
 
         /* Quick Access: Settings Button */
         QuickAccessButton(
-            onClick = {},
+            destination = {},
             iconImage = R.drawable.settings_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp)
@@ -518,26 +578,32 @@ fun QuickAccessBar(
 // This composable serves to render individual links
 @Composable
 fun QuickAccessButton(
-    onClick: () -> Unit,
+    destination: () -> Unit,
     iconImage: Int,
     modifier: Modifier = Modifier,
     containerColor: Color = Color(0xff00A19B)
 ) {
 
+    Log.d("onClick","$destination")
+
     // Quick Access Button here
     FloatingActionButton(
-        containerColor = Color(0xff00736f),
+        containerColor = Color(0xfff8f8f8),
         contentColor = Color(0xffffffff),
-        elevation = FloatingActionButtonDefaults.elevation(16.dp),
-        onClick = onClick,
-        modifier = modifier.size(75.dp)
+        elevation = FloatingActionButtonDefaults.elevation(9.dp),
+        onClick = {
+            destination()
+            Log.d("FAB","Clicked")
+        },
+        modifier = modifier
     ) {
 
         // Instantiate Icon
         Icon(
             painterResource(iconImage),
             contentDescription = "Quick Access Button Prototype",
-            modifier = modifier.size(45.dp)
+            modifier = modifier.size(25.dp),
+            tint = Color(0xffc4c4c4)
         )
 
     }
@@ -740,7 +806,6 @@ fun TabContainer(
     FlowRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier
-            .padding(20.dp)
             .fillMaxWidth()
 //            .verticalScroll(rememberScrollState())
     ){
@@ -846,7 +911,7 @@ fun Tab(
                 disabledContentColor = Color(0xff00736f),
                 disabledContainerColor = Color(0xff00736f)),
             modifier = Modifier
-                .width(195.dp)
+                .fillMaxWidth(0.48f)
                 .background(Color(0xff00736f), RoundedCornerShape(12.dp))
         ){
             Text(
@@ -1038,10 +1103,10 @@ fun RowScope.AddItem(
 
 
 @Composable
-@Preview(showBackground = true)
+@PreviewScreenSizes()
 fun HomeScreenPreview(modifier: Modifier = Modifier) {
     HomeScreen(
         onUserProfileButtonClicked = {},
-        onNotificationButtonClicked = {}
+        onNotificationButtonClicked = {},
     )
 }

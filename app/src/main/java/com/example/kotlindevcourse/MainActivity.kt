@@ -1,6 +1,7 @@
 package com.example.kotlindevcourse
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,14 +28,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.kotlindevcourse.ui.theme.KotlinDevCourseTheme
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.*
+import androidx.navigation.compose.rememberNavController
+import com.example.kotlindevcourse.ui.theme.KotlinDevCourseTheme
+//import com.example.kotlindevcourse.navigation.RootNavGraph
+import com.example.kotlindevcourse.navigation.SetupNavGraph
 
 
 class MainActivity : ComponentActivity() {
 
-//    lateinit var navController: NavHostController
+    lateinit var navHostController: NavHostController
+
 
     // The main()
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -44,12 +48,17 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
+
+
         // When UI Rendering takes place
         setContent {
+
+            navHostController = rememberNavController()
             KotlinDevCourseTheme {
 
-//                navController = rememberNavController()
-                RootNavGraph()
+                SetupNavGraph(navHostController)
+                Log.d("Initializing Root Nav Graph"," - ")
+
 
             }
         }
@@ -242,14 +251,14 @@ fun BodyContentPreview() {
 
     KotlinDevCourseTheme {
 
-        BodyContent(
-            onUserProfileButtonClicked = {},
-            onNotificationButtonClicked = {},
-            width = screenWidth,
-            height = screenHeight,
-            message = "Body Content",
-            from = "Quick Access"
-        )
+//        BodyContent(
+//            onUserProfileButtonClicked = {},
+//            onNotificationButtonClicked = {},
+//            width = screenWidth,
+//            height = screenHeight,
+//            message = "Body Content",
+//            from = "Quick Access"
+//        )
 
     }
 

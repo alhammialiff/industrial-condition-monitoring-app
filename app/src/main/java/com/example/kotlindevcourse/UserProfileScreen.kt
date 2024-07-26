@@ -42,7 +42,7 @@ import androidx.navigation.compose.rememberNavController
 fun UserProfileScreen(navController: NavHostController) {
 
     Scaffold(
-
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
 

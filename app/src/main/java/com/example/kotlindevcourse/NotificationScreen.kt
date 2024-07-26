@@ -37,7 +37,7 @@ import androidx.navigation.compose.rememberNavController
 fun NotificationScreen(navController: NavHostController) {
 
     Scaffold(
-
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
 
