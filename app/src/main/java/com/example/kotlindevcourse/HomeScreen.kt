@@ -955,6 +955,7 @@ fun TabContent(
     Surface(
         shadowElevation = 5.dp,
         shape = RoundedCornerShape(12.dp),
+        color = Color(0xfffffed4),
         modifier = Modifier.padding(5.dp)
     ) {
 
@@ -966,6 +967,7 @@ fun TabContent(
             Text(
                 text = "#${taskIndex} ${task.action} (${task.priority})",
                 style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight(800),
                 modifier = modifier.padding(
                     start = 20.dp,
                     top = 10.dp,
@@ -974,20 +976,10 @@ fun TabContent(
                 )
             )
 
-//        Text(
-//            text = "${task.timestamp}",
-//            style = MaterialTheme.typography.titleSmall,
-//            modifier = modifier.padding(
-//                start = 20.dp,
-//                top = 0.dp,
-//                end = 0.dp,
-//                bottom = 0.dp
-//            )
-//        )
-
             Text(
                 text = "Location ${task.location}",
                 style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight(400),
                 modifier = modifier.padding(
                     start = 20.dp,
                     top = 0.dp,
@@ -999,6 +991,7 @@ fun TabContent(
             Text(
                 text = "${task.taskFor}",
                 style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight(400),
                 modifier = modifier.padding(
                     start = 20.dp,
                     top = 0.dp,
@@ -1011,7 +1004,7 @@ fun TabContent(
 
                 Text(
                     text = "Completed",
-
+                    fontWeight = FontWeight(400),
                     modifier = modifier.padding(
                         start = 20.dp,
                         top = 0.dp,
@@ -1024,6 +1017,7 @@ fun TabContent(
 
                 Text(
                     text = "Incomplete",
+                    fontWeight = FontWeight(400),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = modifier.padding(
                         start = 20.dp,
