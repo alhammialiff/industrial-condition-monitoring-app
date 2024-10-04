@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -196,7 +197,7 @@ fun HomeScreen(
 
             BodyContent(
                 onUserProfileButtonClicked = onUserProfileButtonClicked ,
-                onNotificationButtonClicked = {  },
+                onNotificationButtonClicked = onNotificationButtonClicked,
                 width = screenWidth,
                 height = screenHeight,
                 message = "Body Content",
@@ -251,23 +252,30 @@ fun OverviewSectionGroup(fieldTaskViewModel: FieldTasksViewModel = viewModel()) 
 
 }
 
+
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OverviewSection(
     numOfOutstandingTasks: Int,
     modifier: Modifier = Modifier
+
 ) {
 
     FlowRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
+
         modifier = modifier
             .fillMaxWidth()
-            .padding(
-                16.dp,
-                16.dp,
-                16.dp,
-                8.dp
+            .clip(
+                RoundedCornerShape(
+                    topStart = 0.dp,
+                    topEnd = 0.dp,
+                    bottomStart = 30.dp,
+                    bottomEnd = 30.dp
+                ),
             )
+            .background(Color(0xff00A19B))
             /* Layout Guideline */
 //            .border(
 //                border = BorderStroke(0.dp, Color.LightGray),
@@ -282,59 +290,59 @@ fun OverviewSection(
         )
 
         // Should provide a column of num breakdowns of outstanding tasks
-        FlowColumn(
-            horizontalArrangement = Arrangement.End,
-            modifier = modifier.padding(
-                0.dp,
-                0.dp
-            ),
-        ) {
-
-            Text(
-                text = "2 lube oil change",
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(0.dp, 0.dp, 0.dp, 4.dp)
-                    .border(
-                        border = BorderStroke(1.dp, Color(0xffe0c249)),
-                        shape = RoundedCornerShape(12.dp),
-                    )
-                    .background(Color(0xffe0c249), RoundedCornerShape(12.dp))
-                    .padding(10.dp)
-
-
-            )
-            //            HorizontalDivider()
-            Text(
-                text = "2 pump shutdown",
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(0.dp, 8.dp, 0.dp, 4.dp)
-                    .border(
-                        border = BorderStroke(1.dp, Color(0xffe38329)),
-                        shape = RoundedCornerShape(12.dp),
-                    )
-                    .background(Color(0xffe38329), RoundedCornerShape(12.dp))
-                    .padding(10.dp)
-
-            )
-            //            HorizontalDivider()
-            Text(
-                text = "2 isolation works",
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(0.dp, 8.dp, 0.dp, 0.dp)
-                    .border(
-                        border = BorderStroke(1.dp, Color(0xffee87f5)),
-                        shape = RoundedCornerShape(12.dp),
-                    )
-                    .background(Color(0xffee87f5), RoundedCornerShape(12.dp))
-                    .padding(10.dp)
-            )
-            //            HorizontalDivider()
-
-
-        }
+//        FlowColumn(
+//            horizontalArrangement = Arrangement.End,
+//            modifier = modifier.padding(
+//                0.dp,
+//                0.dp
+//            ),
+//        ) {
+//
+//            Text(
+//                text = "2 lube oil change",
+//                fontWeight = FontWeight.Bold,
+//                modifier = Modifier
+//                    .padding(0.dp, 0.dp, 0.dp, 4.dp)
+//                    .border(
+//                        border = BorderStroke(1.dp, Color(0xffe0c249)),
+//                        shape = RoundedCornerShape(12.dp),
+//                    )
+//                    .background(Color(0xffe0c249), RoundedCornerShape(12.dp))
+//                    .padding(10.dp)
+//
+//
+//            )
+//            //            HorizontalDivider()
+//            Text(
+//                text = "2 pump shutdown",
+//                fontWeight = FontWeight.Bold,
+//                modifier = Modifier
+//                    .padding(0.dp, 8.dp, 0.dp, 4.dp)
+//                    .border(
+//                        border = BorderStroke(1.dp, Color(0xffe38329)),
+//                        shape = RoundedCornerShape(12.dp),
+//                    )
+//                    .background(Color(0xffe38329), RoundedCornerShape(12.dp))
+//                    .padding(10.dp)
+//
+//            )
+//            //            HorizontalDivider()
+//            Text(
+//                text = "2 isolation works",
+//                fontWeight = FontWeight.Bold,
+//                modifier = Modifier
+//                    .padding(0.dp, 8.dp, 0.dp, 0.dp)
+//                    .border(
+//                        border = BorderStroke(1.dp, Color(0xffee87f5)),
+//                        shape = RoundedCornerShape(12.dp),
+//                    )
+//                    .background(Color(0xffee87f5), RoundedCornerShape(12.dp))
+//                    .padding(10.dp)
+//            )
+//            //            HorizontalDivider()
+//
+//
+//        }
     }
 
 }
@@ -342,7 +350,12 @@ fun OverviewSection(
 @Composable
 fun OverviewNumberCard(
     numOfOutstandingTasks: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.padding(
+        0.dp,
+        0.dp,
+        0.dp,
+        20.dp
+    )
 ) {
 
     Column(
@@ -351,10 +364,12 @@ fun OverviewNumberCard(
 //                border = BorderStroke(2.dp, Color(0xff4370cf)),
 //                shape = RoundedCornerShape(12.dp),
 //            )
-            .background(Color(0xffffffff), RoundedCornerShape(12.dp))
+            .background(Color(0xff00A19B), RoundedCornerShape(12.dp))
             .padding(
-                60.dp,
-                20.dp
+                20.dp,
+                0.dp,
+                20.dp,
+                0.dp
             )
 
     ) {
@@ -363,19 +378,20 @@ fun OverviewNumberCard(
         Text(
             text = "$numOfOutstandingTasks",
             fontWeight = FontWeight.ExtraBold,
-            fontSize = 60.sp,
+            fontSize = 70.sp,
             modifier = modifier,
             style = MaterialTheme.typography.headlineLarge,
-            color = Color.Black
+            color = Color.White
         )
 
         /* Define sub composables */
         Text(
             text = "tasks",
             fontWeight = FontWeight.ExtraBold,
-            fontSize = 15.sp,
+            fontSize = 20.sp,
             style = MaterialTheme.typography.labelLarge,
-            color = Color.Black
+            color = Color.White,
+            modifier = Modifier.padding(bottom=20.dp)
         )
 
 
@@ -422,18 +438,13 @@ fun BodyContent(
             modifier = Modifier
                 .background(
                     color = Color(0xff00A19B),
-                    shape = RoundedCornerShape(
-                        topStart = 0.dp,
-                        topEnd = 0.dp,
-                        bottomStart = 16.dp,
-                        bottomEnd = 16.dp
-                    )
+                    shape = RectangleShape
                 )
                 .fillMaxWidth()
         )
 
 
-        HorizontalDivider(color = Color(0xfff8f8f8), thickness = 1.dp)
+        HorizontalDivider(color = Color(0xff00A190), thickness = 2.dp)
 
         OverviewSectionGroup()
 
@@ -495,13 +506,14 @@ fun QuickAccessBar(
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier
+            .fillMaxWidth()
             .padding(
                 start = 12.dp,
                 top = 0.dp,
                 end = 12.dp,
-                bottom = 16.dp
+                bottom = 0.dp
             )
-            .fillMaxWidth()
+
     ) {
 
         // Instantiate array of icon images
@@ -541,7 +553,9 @@ fun QuickAccessBar(
 
         /* Quick Access: Notification */
         QuickAccessButton(
-            destination = onNotificationButtonClicked,
+            destination = {
+                onNotificationButtonClicked.invoke()
+            },
             iconImage = R.drawable.envelope_24,
             containerColor = Color.White,
             modifier = modifier.padding(5.dp)
@@ -807,6 +821,12 @@ fun TabContainer(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier
             .fillMaxWidth()
+            .padding(
+                start = 0.dp,
+                top = 20.dp,
+                end = 0.dp,
+                bottom = 18.dp
+            )
 //            .verticalScroll(rememberScrollState())
     ){
 
@@ -845,6 +865,7 @@ fun TabContainer(
 
         Column(
             modifier = Modifier
+                .padding(10.dp)
                 .verticalScroll(rememberScrollState())
 
         ){
@@ -856,7 +877,8 @@ fun TabContainer(
 
                     canShowContent = isCompletedTabSelected,
                     task = task,
-                    taskIndex = iterableIndex++
+                    taskIndex = iterableIndex++,
+
 
                 )
 

@@ -29,7 +29,7 @@ fun NavGraphBuilder.homeNavGraph(
                 },
 
                 onNotificationButtonClicked = {
-//                    navController.navigate(HomeScreenNav.Notification.name)
+                    navController.navigate(Screen.Notification.route)
                 }
 
             )
@@ -43,7 +43,7 @@ fun NavGraphBuilder.homeNavGraph(
         }
 
         /* Notification Route */
-        composable(route = HomeScreenNav.Notification.name){
+        composable(route = Screen.Notification.route){
             NotificationScreen(navController = navController)
         }
 

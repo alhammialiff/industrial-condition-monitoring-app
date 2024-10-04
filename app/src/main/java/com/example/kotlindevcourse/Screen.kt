@@ -19,6 +19,7 @@ sealed class Screen(val route: String){
     object Home: Screen(route = "home_screen")
     object Login: Screen(route = "login_screen")
     object Profile: Screen(route = "home_screen/profile_screen")
+    object Notification: Screen(route = "home_screen/notification_screen")
 
     /* TODO - Other route label in future */
 
