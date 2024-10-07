@@ -16,8 +16,10 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"
-            android:theme="@style/Theme.KotlinDevCourse">
+            android:theme="@style/Theme.KotlinDevCourse"
+            tools:ignore="DiscouragedApi">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

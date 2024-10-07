@@ -1,5 +1,6 @@
 package com.example.kotlindevcourse
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -47,8 +48,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
-
-
 
         // When UI Rendering takes place
         setContent {

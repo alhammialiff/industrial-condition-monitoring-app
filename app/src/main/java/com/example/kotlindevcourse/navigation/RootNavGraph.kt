@@ -49,16 +49,3 @@ fun SetupNavGraph(
 
 
 }
-
-enum class HomeScreenNav(){
-    Home,
-    UserProfile,
-    Notification,
-    Search,
-    Schedule,
-    Settings
-}
-
-enum class RootNav(){
-    Home
-}

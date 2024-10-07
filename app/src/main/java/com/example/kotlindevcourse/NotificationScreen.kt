@@ -84,7 +84,7 @@ fun NotificationScreen(navController: NavHostController) {
 
                         Icon(
                             painterResource(backArrowIconImage),
-                            contentDescription = "Quick Access Button Prototype",
+                            contentDescription = "Back Button",
                             modifier = Modifier.size(45.dp)
                         )
 

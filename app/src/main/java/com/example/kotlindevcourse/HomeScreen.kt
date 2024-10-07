@@ -61,7 +61,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.kotlindevcourse.navigation.HomeScreenNav
+//import com.example.kotlindevcourse.navigation.HomeScreenNav
 import java.lang.reflect.Field
 import java.util.Date
 import java.util.concurrent.Flow
@@ -69,9 +69,9 @@ import java.util.concurrent.Flow
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-
     onUserProfileButtonClicked: () -> Unit,
-    onNotificationButtonClicked: () -> Unit
+    onNotificationButtonClicked: () -> Unit,
+    onTaskCardClicked: () -> Unit
 ) {
 
 
@@ -198,6 +198,7 @@ fun HomeScreen(
             BodyContent(
                 onUserProfileButtonClicked = onUserProfileButtonClicked ,
                 onNotificationButtonClicked = onNotificationButtonClicked,
+                onTaskCardClicked = onTaskCardClicked,
                 width = screenWidth,
                 height = screenHeight,
                 message = "Body Content",
@@ -408,6 +409,7 @@ fun OverviewNumberCard(
 fun BodyContent(
     onUserProfileButtonClicked: () -> Unit,
     onNotificationButtonClicked: () -> Unit,
+    onTaskCardClicked: () -> Unit,
     width: Dp,
     height: Dp,
     message: String,
@@ -451,6 +453,7 @@ fun BodyContent(
         TabContainer(
             selectedTabIndex = 1,
             divider = {},
+            onTaskCardClicked = onTaskCardClicked,
             modifier = modifier
         )
 
@@ -704,7 +707,7 @@ open class TaskList {
     }
 
     /* TODO - Get task list */
-    /* Add Task */
+    /* Get Task */
     fun getTask(): MutableList<FieldTask>{
 
         Log.d("Task List getTask()", "Value - " + this.tasklist);
@@ -714,7 +717,7 @@ open class TaskList {
 
     }
 
-    /* Add Task */
+    /* Set Task */
     fun setTask(fieldTask: FieldTask){
 
         /* Add task */
@@ -796,6 +799,7 @@ class TabViewModel: ViewModel(){
 @Composable
 fun TabContainer(
     selectedTabIndex: Any,
+    onTaskCardClicked: () -> Unit,
     divider: Any,
     modifier: Modifier = Modifier,
     tabViewModel: TabViewModel = viewModel(),
@@ -807,7 +811,6 @@ fun TabContainer(
     *  */
     val isOutstandingTabSelected by tabViewModel.isOutstandingTabSelected.observeAsState(initial = false)
     val isCompletedTabSelected by tabViewModel.isCompletedTabSelected.observeAsState(initial = false)
-
 
     val taskMasterList = taskViewModel.getInitTaskList()
 
@@ -878,6 +881,7 @@ fun TabContainer(
                     canShowContent = isCompletedTabSelected,
                     task = task,
                     taskIndex = iterableIndex++,
+                    onTaskCardClicked = onTaskCardClicked
 
 
                 )
@@ -886,12 +890,7 @@ fun TabContainer(
 
         }
 
-
-
         iterableIndex = 0
-
-
-
 
     }
 
@@ -954,12 +953,16 @@ fun Tab(
     
 }
 
+// =========================================
+// Task Card Button
+// =========================================
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TabContent(
     canShowContent: Boolean,
     task: FieldTask,
     taskIndex: Int,
+    onTaskCardClicked: ()-> Unit,
     modifier: Modifier = Modifier
         .fillMaxWidth()
         .border(
@@ -978,7 +981,8 @@ fun TabContent(
         shadowElevation = 5.dp,
         shape = RoundedCornerShape(12.dp),
         color = Color(0xfffffed4),
-        modifier = Modifier.padding(5.dp)
+        modifier = Modifier.padding(5.dp),
+        onClick = onTaskCardClicked
     ) {
 
         FlowColumn(
@@ -1124,5 +1128,6 @@ fun HomeScreenPreview(modifier: Modifier = Modifier) {
     HomeScreen(
         onUserProfileButtonClicked = {},
         onNotificationButtonClicked = {},
+        onTaskCardClicked = {}
     )
 }

@@ -20,7 +20,7 @@ sealed class Screen(val route: String){
     object Login: Screen(route = "login_screen")
     object Profile: Screen(route = "home_screen/profile_screen")
     object Notification: Screen(route = "home_screen/notification_screen")
-
+    object TaskDetail: Screen(route = "home_screen/task_detail")
     /* TODO - Other route label in future */
 
 }
