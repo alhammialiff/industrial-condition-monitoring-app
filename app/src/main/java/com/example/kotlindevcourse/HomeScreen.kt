@@ -1,7 +1,6 @@
 package com.example.kotlindevcourse
 
 import android.util.Log
-import android.view.ViewGroup
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -36,19 +34,13 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -58,14 +50,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlindevcourse.states.TasksViewModel
+
 //import com.example.kotlindevcourse.navigation.HomeScreenNav
-import java.lang.reflect.Field
-import java.util.Date
-import java.util.concurrent.Flow
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -627,174 +615,6 @@ fun QuickAccessButton(
 }
 
 /*
-*  Tasks View Model
-* */
-class TasksViewModel: ViewModel(){
-
-    /* Dummy Data Function for now */
-    var fieldTaskList = TaskList(
-
-        mutableListOf(
-
-            FieldTask(
-                0,
-                "Lube Oil Change",
-                arrayOf(
-                    TaskStep(
-                        0,
-                        "Unscrew Oiler Cap from Oiler"
-                    ),
-                    TaskStep(
-                        1,
-                        "Refill Lube Oil till the Max line"
-                    ),
-                    TaskStep(
-                        2,
-                        "Screw Oiler Cap back onto Oiler"
-                    ),
-                ),
-                "23/07/2024",
-                "Area A-2",
-                "high",
-                "Area B-4",
-                false
-            ),
-            FieldTask(
-                1,
-                "Lube Oil Change",
-                arrayOf(
-                    TaskStep(
-                        0,
-                        "Unscrew Oiler Cap from Oiler"
-                    ),
-                    TaskStep(
-                        1,
-                        "Refill Lube Oil till the Max line"
-                    ),
-                    TaskStep(
-                        2,
-                        "Screw Oiler Cap back onto Oiler"
-                    ),
-                ),
-                "23/07/2024",
-                "Area B-1",
-                "low",
-                "Area B-4",
-                false
-            ),
-            FieldTask(
-                2,
-                "Lube Oil Change",
-                arrayOf(
-                    TaskStep(
-                        0,
-                        "Unscrew Oiler Cap from Oiler"
-                    ),
-                    TaskStep(
-                        1,
-                        "Refill Lube Oil till the Max line"
-                    ),
-                    TaskStep(
-                        2,
-                        "Screw Oiler Cap back onto Oiler"
-                    ),
-                ),
-                "23/07/2024",
-                "Area A-1",
-                "high",
-                "Area B-2",
-                false
-            )
-
-        )
-
-    )
-
-//    private var _taskMasterList: MutableState<TaskList> = MutableState()
-    var taskMasterList: TaskList = fieldTaskList
-
-    /* State handler to send initial data down to composable */
-    fun getInitTaskList(): TaskList{
-
-        return taskMasterList
-
-    }
-
-}
-
-
-/*
-*  [TO COMPARTMENTALISE]
-* */
-/* Task Class */
-data class FieldTask (
-
-    val taskID: Int,
-    val action: String,
-    val taskSteps: Array<TaskStep>,
-    val timestamp: String,
-    val location: String,
-    val priority: String,
-    val taskFor: String,
-    val completed: Boolean
-
-)
-
-/* Task Step
-* To describe each step
-* What? For dynamic routing of Task Detail Page
-* Why? Some task has more steps than others, hence
-* more page navigation than others
-* */
-data class TaskStep (
-    val stepID: Int,
-    val description: String
-    /* TODO: Add more data to pass to route args */
-    /* TODO: Image key */
-    /* TODO: isFinalStep Flag */
-)
-
-/* TaskList Class */
-open class TaskList {
-
-    var tasklist: MutableList<FieldTask>
-    var taskIndex: Int = 0
-
-    constructor(fieldTaskList: MutableList<FieldTask>) {
-
-        this.tasklist = fieldTaskList
-
-    }
-
-    /* TODO - Get task list */
-    /* Get Task */
-    fun getTask(): MutableList<FieldTask>{
-
-        Log.d("Task List getTask()", "Value - " + this.tasklist);
-
-        /* Add task */
-        return this.tasklist
-
-    }
-
-    /* Set Task */
-    fun setTask(fieldTask: FieldTask){
-
-        /* Add task */
-        this.tasklist.add(taskIndex, fieldTask)
-
-        /* Increment index after add */
-        this.taskIndex++
-
-    }
-
-    /* TODO - Remove task */
-
-    /* TODO - Update task */
-
-}
-
-/*
 * Custom Tab Functions & Class
 * */
 class TabViewModel: ViewModel(){
@@ -1045,6 +865,8 @@ fun TabContent(
         color = Color(0xfffffed4),
         modifier = Modifier.padding(5.dp),
         onClick = {
+
+            /* */
             onTaskCardClicked.navigate(
                 route = Screen.TaskDetail.passTaskIDandStepID(
                     TASK_ID = task.taskID,

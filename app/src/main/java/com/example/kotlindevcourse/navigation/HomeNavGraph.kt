@@ -40,10 +40,16 @@ fun NavGraphBuilder.homeNavGraph(
                     navController.navigate(Screen.Notification.route)
                 },
 
-//                onTaskCardClicked = {
-//                    navController.navigate(Screen.TaskDetail.route)
-//                }
+                /*onTaskCardClicked = {
+                    navController.navigate(Screen.TaskDetail.route)
+                }*/
 
+                /* [Note]
+                *  Because we need to pass arguments into Task Details,
+                *  we need to send navController down the composable,
+                *  and only invoke .navigate inside the clickable
+                *  task card
+                * */
                 onTaskCardClicked = navController
 
             )
@@ -83,8 +89,16 @@ fun NavGraphBuilder.homeNavGraph(
             )
         ){
             /* [Log] Arguments for Task Detail Screen */
-            Log.d("Task Details - Args - ", it.arguments?.getInt(TASK_ID).toString())
-            TaskDetailScreen(navController = navController)
+            Log.d("Home Nav Graph - Task Details - Args - ", it.arguments?.getInt(TASK_ID).toString())
+
+            /* Invoke Task Detail Screen
+            * TODO; Rename this to Task Detail Start Screen
+            * */
+            TaskDetailScreen(
+                navController = navController,
+                TASK_ID = it.arguments?.getInt(TASK_ID, 0)
+            )
+
         }
 
     }

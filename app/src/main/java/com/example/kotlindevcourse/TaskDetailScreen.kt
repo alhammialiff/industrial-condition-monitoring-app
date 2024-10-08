@@ -1,5 +1,6 @@
 package com.example.kotlindevcourse
 
+import android.util.Log
 import android.view.RoundedCorner
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -58,7 +59,8 @@ import androidx.navigation.compose.rememberNavController
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetailScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    TASK_ID: Int?
 ){
     /* Set page structure using Scaffold */
     Scaffold(
@@ -164,6 +166,9 @@ fun TaskDetailScreen(
     ){
         innerPadding ->
 
+        /* [Log] Check retrieved TASK_ID from Home Screen */
+        Log.d("Task Details - TASK_ID", TASK_ID.toString())
+
         /* This column houses the container that encapsulates the layout */
         Column(
             modifier = Modifier.padding(innerPadding)
@@ -171,6 +176,7 @@ fun TaskDetailScreen(
 
             PageContainer(
                 navController =  navController,
+                TASK_ID = TASK_ID,
                 modifier = Modifier
             )
 
@@ -185,6 +191,7 @@ fun TaskDetailScreen(
 @Composable
 fun PageContainer(
     navController: NavHostController,
+    TASK_ID: Int?,
     modifier: Modifier = Modifier
 ){
 
@@ -419,7 +426,8 @@ fun PageContainer(
 fun TaskDetailScreenPreview(modifier: Modifier = Modifier){
 
     TaskDetailScreen(
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        TASK_ID = 99
     )
 
 }
