@@ -57,6 +57,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -71,10 +72,8 @@ import java.util.concurrent.Flow
 fun HomeScreen(
     onUserProfileButtonClicked: () -> Unit,
     onNotificationButtonClicked: () -> Unit,
-    onTaskCardClicked: () -> Unit
+    onTaskCardClicked: NavController
 ) {
-
-
 
     Scaffold(
         containerColor = Color.White,
@@ -409,7 +408,7 @@ fun OverviewNumberCard(
 fun BodyContent(
     onUserProfileButtonClicked: () -> Unit,
     onNotificationButtonClicked: () -> Unit,
-    onTaskCardClicked: () -> Unit,
+    onTaskCardClicked: NavController,
     width: Dp,
     height: Dp,
     message: String,
@@ -638,7 +637,22 @@ class TasksViewModel: ViewModel(){
         mutableListOf(
 
             FieldTask(
+                0,
                 "Lube Oil Change",
+                arrayOf(
+                    TaskStep(
+                        0,
+                        "Unscrew Oiler Cap from Oiler"
+                    ),
+                    TaskStep(
+                        1,
+                        "Refill Lube Oil till the Max line"
+                    ),
+                    TaskStep(
+                        2,
+                        "Screw Oiler Cap back onto Oiler"
+                    ),
+                ),
                 "23/07/2024",
                 "Area A-2",
                 "high",
@@ -646,7 +660,22 @@ class TasksViewModel: ViewModel(){
                 false
             ),
             FieldTask(
+                1,
                 "Lube Oil Change",
+                arrayOf(
+                    TaskStep(
+                        0,
+                        "Unscrew Oiler Cap from Oiler"
+                    ),
+                    TaskStep(
+                        1,
+                        "Refill Lube Oil till the Max line"
+                    ),
+                    TaskStep(
+                        2,
+                        "Screw Oiler Cap back onto Oiler"
+                    ),
+                ),
                 "23/07/2024",
                 "Area B-1",
                 "low",
@@ -654,7 +683,22 @@ class TasksViewModel: ViewModel(){
                 false
             ),
             FieldTask(
+                2,
                 "Lube Oil Change",
+                arrayOf(
+                    TaskStep(
+                        0,
+                        "Unscrew Oiler Cap from Oiler"
+                    ),
+                    TaskStep(
+                        1,
+                        "Refill Lube Oil till the Max line"
+                    ),
+                    TaskStep(
+                        2,
+                        "Screw Oiler Cap back onto Oiler"
+                    ),
+                ),
                 "23/07/2024",
                 "Area A-1",
                 "high",
@@ -685,13 +729,29 @@ class TasksViewModel: ViewModel(){
 /* Task Class */
 data class FieldTask (
 
+    val taskID: Int,
     val action: String,
+    val taskSteps: Array<TaskStep>,
     val timestamp: String,
     val location: String,
     val priority: String,
     val taskFor: String,
     val completed: Boolean
 
+)
+
+/* Task Step
+* To describe each step
+* What? For dynamic routing of Task Detail Page
+* Why? Some task has more steps than others, hence
+* more page navigation than others
+* */
+data class TaskStep (
+    val stepID: Int,
+    val description: String
+    /* TODO: Add more data to pass to route args */
+    /* TODO: Image key */
+    /* TODO: isFinalStep Flag */
 )
 
 /* TaskList Class */
@@ -799,7 +859,7 @@ class TabViewModel: ViewModel(){
 @Composable
 fun TabContainer(
     selectedTabIndex: Any,
-    onTaskCardClicked: () -> Unit,
+    onTaskCardClicked: NavController,
     divider: Any,
     modifier: Modifier = Modifier,
     tabViewModel: TabViewModel = viewModel(),
@@ -861,7 +921,6 @@ fun TabContainer(
             }
 
         }
-
 
         var iterableTaskList = taskMasterList.getTask().listIterator()
         var iterableIndex: Int = 1
@@ -962,7 +1021,7 @@ fun TabContent(
     canShowContent: Boolean,
     task: FieldTask,
     taskIndex: Int,
-    onTaskCardClicked: ()-> Unit,
+    onTaskCardClicked: NavController,
     modifier: Modifier = Modifier
         .fillMaxWidth()
         .border(
@@ -977,12 +1036,22 @@ fun TabContent(
             5.dp
         )
 ){
+
+    Log.d("task.taskID",task.taskID.toString())
+    Log.d("task.taskSteps[taskIndex].stepID",task.taskSteps[taskIndex-1].stepID.toString())
     Surface(
         shadowElevation = 5.dp,
         shape = RoundedCornerShape(12.dp),
         color = Color(0xfffffed4),
         modifier = Modifier.padding(5.dp),
-        onClick = onTaskCardClicked
+        onClick = {
+            onTaskCardClicked.navigate(
+                route = Screen.TaskDetail.passTaskIDandStepID(
+                    TASK_ID = task.taskID,
+                    STEP_ID = task.taskSteps[taskIndex-1].stepID
+                )
+            )
+        }
     ) {
 
         FlowColumn(
@@ -1128,6 +1197,6 @@ fun HomeScreenPreview(modifier: Modifier = Modifier) {
     HomeScreen(
         onUserProfileButtonClicked = {},
         onNotificationButtonClicked = {},
-        onTaskCardClicked = {}
+        onTaskCardClicked = rememberNavController()
     )
 }

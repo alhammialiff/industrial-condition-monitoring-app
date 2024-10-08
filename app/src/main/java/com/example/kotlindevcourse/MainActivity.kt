@@ -58,7 +58,6 @@ class MainActivity : ComponentActivity() {
                 SetupNavGraph(navHostController)
                 Log.d("Initializing Root Nav Graph"," - ")
 
-
             }
         }
     }
