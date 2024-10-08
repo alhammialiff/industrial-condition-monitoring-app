@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -229,97 +230,99 @@ fun PageContainer(
                 )
             }
 
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-
-
-
-
-
         }
     }
 
     /* TODO: STOP HERE 07/10/2024
     *   Center text horizontally */
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .padding(20.dp)
+
     ){
         Text(
             text = "#1 Lube Oil Change",
-            style = MaterialTheme.typography.headlineLarge
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.ExtraBold
         )
 
-        Text(
-            text = "3 steps",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        /* Training Overview Card */
+        Column(
+            modifier = modifier
+                .padding(top = 20.dp)
+                .background(Color(0xff00A19B), RoundedCornerShape(12.dp))
+                .padding(20.dp)
 
-    }
-
-
-
-    /* TODO: Button Row */
-    Row(
-        modifier = modifier
-    ){
-
-        /* Back Button */
-        Surface(
-            shadowElevation = 4.dp,
-            shape = RoundedCornerShape(20.dp),
-            color = Color(0xffd4d4d4),
-            modifier = Modifier.padding(3.dp)
         ){
 
-            Button(
-                onClick = { /*TODO*/ },
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonColors(
-                    containerColor = Color(0xffd4d4d4),
-                    contentColor = Color(0xffd4d4d4),
-                    disabledContainerColor = Color(0xffd4d4d4),
-                    disabledContentColor = Color(0xffd4d4d4)
-                ),
-                modifier = modifier.fillMaxWidth(0.5f)
+            Row(
+                modifier = modifier
+                    .padding(bottom = 10.dp)
+            ){
 
-            ) {
 
-                Text(
-                    text = "Back",
-                    color = Color.Black,
-
+                Image(
+                    painterResource(R.drawable.step_count_foreground),
+                    contentDescription = "No. of Steps",
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(end = 5.dp)
                 )
 
-            }
-
-        }
-
-        /* Start Button */
-        Surface(
-            shadowElevation = 4.dp,
-            shape = RoundedCornerShape(20.dp),
-            color = Color(0xff00736f),
-            modifier = Modifier.padding(3.dp)
-        ){
-
-            Button(
-                onClick = { /*TODO*/ },
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonColors(
-                    containerColor = Color(0xff00736f),
-                    contentColor = Color(0xff00736f),
-                    disabledContainerColor = Color(0xff00736f),
-                    disabledContentColor = Color(0xff00736f)
-                ),
-                modifier = modifier.fillMaxWidth()
-            ) {
-
                 Text(
-                    text = "Start",
+                    text = "3 steps",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
                     color = Color.White,
+                    modifier = modifier.weight(1f)
+                )
 
+                Image(
+                    painterResource(R.drawable.time),
+                    contentDescription = "Approx. Task Duration",
+                    modifier = Modifier.size(20.dp)
+                )
+
+                Text(
+                    text = "20 mins",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = modifier.weight(1f)
+                )
+
+            }
+
+            Row(
+                modifier = modifier
+            ){
+
+                Image(
+                    painterResource(R.drawable.pax_foreground),
+                    contentDescription = "Approx. Task Duration",
+                    modifier = Modifier.size(20.dp)
+                )
+
+                Text(
+                    text = "2 pax",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = modifier.weight(1f)
+                )
+
+                Image(
+                    painterResource(R.drawable.difficulty_foreground),
+                    contentDescription = "Approx. Task Duration",
+                    modifier = Modifier.size(20.dp)
+                )
+
+                Text(
+                    text = "Easy",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = modifier.weight(1f)
                 )
 
             }
@@ -327,7 +330,87 @@ fun PageContainer(
         }
 
 
+
+
+        /* TODO: Button Row */
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            modifier = modifier.weight(1f)
+        ){
+
+
+
+            /* Back Button */
+            Surface(
+                shadowElevation = 4.dp,
+                shape = RoundedCornerShape(20.dp),
+                color = Color(0xffd4d4d4),
+                modifier = Modifier.padding(3.dp)
+            ){
+
+                Button(
+                    onClick = { /*TODO*/ },
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonColors(
+                        containerColor = Color(0xffd4d4d4),
+                        contentColor = Color(0xffd4d4d4),
+                        disabledContainerColor = Color(0xffd4d4d4),
+                        disabledContentColor = Color(0xffd4d4d4)
+                    ),
+                    modifier = modifier.fillMaxWidth(0.5f)
+
+                ) {
+
+                    Text(
+                        text = "Back",
+                        color = Color.Black,
+                    )
+
+                }
+
+            }
+
+            /* Start Button */
+            Surface(
+                shadowElevation = 4.dp,
+                shape = RoundedCornerShape(20.dp),
+                color = Color(0xff00736f),
+                modifier = Modifier.padding(3.dp)
+            ){
+
+                Button(
+                    onClick = { /*TODO*/ },
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonColors(
+                        containerColor = Color(0xff00736f),
+                        contentColor = Color(0xff00736f),
+                        disabledContainerColor = Color(0xff00736f),
+                        disabledContentColor = Color(0xff00736f)
+                    ),
+                    modifier = modifier.fillMaxWidth()
+                ) {
+
+                    Text(
+                        text = "Start",
+                        color = Color.White,
+
+                    )
+
+                }
+
+            }
+
+
+        }
+
+
+
     }
+
+
+
+
+
 
 }
 
