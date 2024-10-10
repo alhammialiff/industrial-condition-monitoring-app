@@ -1,9 +1,6 @@
 package com.example.kotlindevcourse
 
-/*
-*  [TO COMPARTMENTALISE]
-* */
-/* Task Class */
+/* [Field Task Data Model] */
 data class FieldTask (
 
     val taskID: Int,

@@ -1,23 +1,15 @@
 package com.example.kotlindevcourse
 
 import android.util.Log
-import android.view.RoundedCorner
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,35 +22,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun TaskDetailScreen(
+fun TaskDetailStepScreen(
     navController: NavHostController,
     TASK_ID: Int?
 ){
@@ -78,7 +59,7 @@ fun TaskDetailScreen(
                 ),
                 title = {
                     Text(
-                        text="Task Detail Title",
+                        text="Task Step",
                         fontWeight = FontWeight.ExtraBold,
                         color = Color( 0xffffffff)
                     )
@@ -164,17 +145,19 @@ fun TaskDetailScreen(
             }
         }
     ){
-        innerPadding ->
+            innerPadding ->
 
         /* [Log] Check retrieved TASK_ID from Home Screen */
-        Log.d("Task Details - TASK_ID", TASK_ID.toString())
+        Log.d("In Step","In Composable");
+        Log.d("TaskDetailStepScreen - TASK_ID", TASK_ID.toString())
+
 
         /* This column houses the container that encapsulates the layout */
         Column(
             modifier = Modifier.padding(innerPadding)
         ){
 
-            PageContainer(
+            TaskDetailStepScreenPageContainer(
                 navController =  navController,
                 TASK_ID = TASK_ID,
                 modifier = Modifier
@@ -189,7 +172,7 @@ fun TaskDetailScreen(
 
 /* This is the container that encapsulates all the components residing in this screen */
 @Composable
-fun PageContainer(
+fun TaskDetailStepScreenPageContainer(
     navController: NavHostController,
     TASK_ID: Int?,
     modifier: Modifier = Modifier
@@ -247,14 +230,23 @@ fun PageContainer(
             .padding(20.dp)
 
     ){
+
+        /* Step Number goes here */
         Text(
-            text = "#1 Lube Oil Change",
+            text = "Step 1",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.ExtraBold
         )
 
+        /* Step Description goes here */
+        Text(
+            text = "Step Description Here",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.SemiBold
+        )
+
         /* Training Overview Card */
-        Column(
+        /*Column(
             modifier = modifier
                 .padding(top = 20.dp)
                 .background(Color(0xff00A19B), RoundedCornerShape(12.dp))
@@ -334,7 +326,7 @@ fun PageContainer(
 
             }
 
-        }
+        }*/
 
 
 
@@ -398,10 +390,10 @@ fun PageContainer(
                 ) {
 
                     Text(
-                        text = "Start",
+                        text = "Next",
                         color = Color.White,
 
-                    )
+                        )
 
                 }
 
@@ -423,9 +415,9 @@ fun PageContainer(
 
 @Composable
 @PreviewScreenSizes()
-fun TaskDetailScreenPreview(modifier: Modifier = Modifier){
+fun TaskDetailStepScreenPreview(modifier: Modifier = Modifier){
 
-    TaskDetailScreen(
+    TaskDetailStepScreen(
         navController = rememberNavController(),
         TASK_ID = 99
     )

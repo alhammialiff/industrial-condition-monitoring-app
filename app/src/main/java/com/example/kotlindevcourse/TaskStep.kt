@@ -1,6 +1,6 @@
 package com.example.kotlindevcourse
 
-/* Task Step
+/* [Task Step Data Model]
 * To describe each step
 * What? For dynamic routing of Task Detail Page
 * Why? Some task has more steps than others, hence

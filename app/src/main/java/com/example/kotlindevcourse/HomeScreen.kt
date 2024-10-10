@@ -49,7 +49,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlindevcourse.states.TasksViewModel
 
@@ -60,7 +60,7 @@ import com.example.kotlindevcourse.states.TasksViewModel
 fun HomeScreen(
     onUserProfileButtonClicked: () -> Unit,
     onNotificationButtonClicked: () -> Unit,
-    onTaskCardClicked: NavController
+    onTaskCardClicked: NavHostController
 ) {
 
     Scaffold(
@@ -396,7 +396,7 @@ fun OverviewNumberCard(
 fun BodyContent(
     onUserProfileButtonClicked: () -> Unit,
     onNotificationButtonClicked: () -> Unit,
-    onTaskCardClicked: NavController,
+    onTaskCardClicked: NavHostController,
     width: Dp,
     height: Dp,
     message: String,
@@ -679,7 +679,7 @@ class TabViewModel: ViewModel(){
 @Composable
 fun TabContainer(
     selectedTabIndex: Any,
-    onTaskCardClicked: NavController,
+    onTaskCardClicked: NavHostController,
     divider: Any,
     modifier: Modifier = Modifier,
     tabViewModel: TabViewModel = viewModel(),
@@ -742,8 +742,8 @@ fun TabContainer(
 
         }
 
-        var iterableTaskList = taskMasterList.getTask().listIterator()
-        var iterableIndex: Int = 1
+        var iterableTaskList = taskMasterList.getAllTasks().listIterator()
+        var iterableIndex: Int = 0
 
         Column(
             modifier = Modifier
@@ -759,11 +759,13 @@ fun TabContainer(
 
                     canShowContent = isCompletedTabSelected,
                     task = task,
-                    taskIndex = iterableIndex++,
+                    taskIndex = iterableIndex,
                     onTaskCardClicked = onTaskCardClicked
 
 
                 )
+
+                iterableIndex++
 
             }
 
@@ -841,7 +843,7 @@ fun TabContent(
     canShowContent: Boolean,
     task: FieldTask,
     taskIndex: Int,
-    onTaskCardClicked: NavController,
+    onTaskCardClicked: NavHostController,
     modifier: Modifier = Modifier
         .fillMaxWidth()
         .border(
@@ -854,11 +856,15 @@ fun TabContent(
             5.dp,
             5.dp,
             5.dp
-        )
+        ),
+    taskViewModel: TasksViewModel = viewModel()
+
 ){
 
-    Log.d("task.taskID",task.taskID.toString())
-    Log.d("task.taskSteps[taskIndex].stepID",task.taskSteps[taskIndex-1].stepID.toString())
+
+
+//    Log.d("task.taskID",task.taskID.toString())
+//    Log.d("task.taskSteps[taskIndex].stepID",task.taskSteps[taskIndex-1].stepID.toString())
     Surface(
         shadowElevation = 5.dp,
         shape = RoundedCornerShape(12.dp),
@@ -866,13 +872,17 @@ fun TabContent(
         modifier = Modifier.padding(5.dp),
         onClick = {
 
-            /* */
+            /* Navigate and pass data over into Task Detail Start Screen
+            *   TASK_ID = Task Card Array Index
+            *   STEP_ID = Next Step of a Task (WIP)
+            * */
             onTaskCardClicked.navigate(
-                route = Screen.TaskDetail.passTaskIDandStepID(
+                route = Screen.TaskDetailStart.passTaskIDandStepID(
                     TASK_ID = task.taskID,
-                    STEP_ID = task.taskSteps[taskIndex-1].stepID
+                    STEP_ID = task.taskSteps[taskIndex].stepID
                 )
             )
+
         }
     ) {
 

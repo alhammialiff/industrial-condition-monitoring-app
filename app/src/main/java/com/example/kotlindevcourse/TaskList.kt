@@ -1,8 +1,12 @@
 package com.example.kotlindevcourse
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 
-/* TaskList Class */
+/* [TaskList Data Model]
+*  Allows accessing the mutable list like a normal array
+*  (To confirm again)
+*  */
 open class TaskList {
 
     var tasklist: MutableList<FieldTask>
@@ -15,17 +19,26 @@ open class TaskList {
     }
 
     /* TODO - Get task list */
-    /* Get Task */
-    fun getTask(): MutableList<FieldTask>{
+    /* Get all task */
+    fun getAllTasks(): MutableList<FieldTask>{
 
-        Log.d("Task List getTask()", "Value - " + this.tasklist);
+//        Log.d("Task List getTask()", "Value - " + this.tasklist);
 
         /* Add task */
         return this.tasklist
 
     }
 
-    /* Set Task */
+    /* Get a specific task by its index */
+    fun getTaskByIndex(index: Int): FieldTask{
+
+        Log.d("5. Task List getTaskByIndex()", "Value - " + this.tasklist[index]);
+
+        return this.tasklist[index]
+
+    }
+
+    /* TODO - Set Task */
     fun setTask(fieldTask: FieldTask){
 
         /* Add task */

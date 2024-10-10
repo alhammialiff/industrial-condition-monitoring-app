@@ -2,6 +2,11 @@ package com.example.kotlindevcourse.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.example.kotlindevcourse.AUTH_GRAPH_ROUTE
@@ -49,3 +54,19 @@ fun SetupNavGraph(
 
 
 }
+
+/*
+@Composable
+inline fun <reified T: ViewModel>NavBackStackEntry.sharedViewModel(navController: NavController): T{
+
+    val navGraphRoute = destination.parent?.route ?: return viewModel()
+    val parentEntry = remember(this){
+
+        navController.getBackStackEntry(navGraphRoute)
+
+    }
+
+    return viewModel(parentEntry)
+
+
+}*/

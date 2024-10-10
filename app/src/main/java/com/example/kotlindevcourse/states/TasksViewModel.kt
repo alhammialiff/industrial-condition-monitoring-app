@@ -1,9 +1,21 @@
 package com.example.kotlindevcourse.states
 
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.kotlindevcourse.FieldTask
 import com.example.kotlindevcourse.TaskStep
 import com.example.kotlindevcourse.TaskList
+
+/*
+* [ViewModel] To Hoist tasks data up so that
+*             screens can access it while retaining
+*             statelessness
+* */
 class TasksViewModel: ViewModel(){
 
     /* [TASK DATA]
@@ -42,7 +54,7 @@ class TasksViewModel: ViewModel(){
             ),
             FieldTask(
                 1,
-                "Lube Oil Change",
+                "Check Pump Flow Rate",
                 arrayOf(
                     TaskStep(
                         0,
@@ -65,7 +77,7 @@ class TasksViewModel: ViewModel(){
             ),
             FieldTask(
                 2,
-                "Lube Oil Change",
+                "Examine Furnace",
                 arrayOf(
                     TaskStep(
                         0,
@@ -88,10 +100,16 @@ class TasksViewModel: ViewModel(){
             )
 
         )
-//
+
     )
 
-    //    private var _taskMasterList: MutableState<TaskList> = MutableState()
+    // Mutable Live Data for Current Task Index
+//    private var _currentTaskIndex: MutableLiveData<Int> = MutableLiveData(0)
+    private val _currentTaskIndex: MutableLiveData<Int> = MutableLiveData<Int>()
+
+    // Accessible data to be passed over as index to access TaskList
+    private val currentTaskIndex: Int? = _currentTaskIndex.value
+
     var taskMasterList: TaskList = fieldTaskList
 
     /* State handler to send initial data down to composable */
@@ -100,5 +118,32 @@ class TasksViewModel: ViewModel(){
         return taskMasterList
 
     }
+
+    private fun getCurrentTaskIndex(): Int{
+
+        return currentTaskIndex!!
+
+    }
+
+    fun setCurrentTaskIndex(taskIndex: Int): Unit{
+
+        Log.d("2. Passing Curr Task Idx", "Value - " + taskIndex);
+
+        _currentTaskIndex.value = taskIndex
+
+        Log.d("3. After Set Curr Task Idx", "Value - " + _currentTaskIndex.value);
+
+    }
+
+
+    /* State handler to retrieve specific task by index of Task Card (i.e currentTaskIndex) */
+    fun getTaskByCurrentIndex(TASK_ID: Int): FieldTask{
+
+        var specificFieldTask = taskMasterList.getTaskByIndex(TASK_ID)
+
+        return specificFieldTask
+
+    }
+
 
 }

@@ -13,6 +13,7 @@ const val STEP_ID = "stepID"
 const val ROOT_GRAPH_ROUTE = "root"
 const val AUTH_GRAPH_ROUTE = "auth"
 const val HOME_GRAPH_ROUTE = "home"
+const val TASK_TUTORIAL_ROUTE = "task_tutorial"
 
 
 sealed class Screen(val route: String){
@@ -21,8 +22,9 @@ sealed class Screen(val route: String){
     object Login: Screen(route = "login_screen")
     object Profile: Screen(route = "home_screen/profile_screen")
     object Notification: Screen(route = "home_screen/notification_screen")
-//    object TaskDetail: Screen(route = "home_screen/task_detail")
-    object TaskDetail: Screen(route = "home_screen/task_detail/{$TASK_ID}/{$STEP_ID}"){
+//    object TaskDetailStart: Screen(route = "home_screen/task_detail")
+
+    object TaskDetailStart: Screen(route = "home_screen/task_detail/{$TASK_ID}/{$STEP_ID}"){
 
         fun passTaskIDandStepID(
             TASK_ID: Int,
@@ -32,6 +34,17 @@ sealed class Screen(val route: String){
         }
 
     }
-    /* TODO - Other route label in future */
+
+    object TaskDetailStep: Screen(route = "home_screen/task_detail/step/{$TASK_ID}/{$STEP_ID}"){
+
+        fun passTaskIDandStepID(
+            TASK_ID: Int,
+            STEP_ID: Int
+        ): String{
+            return "home_screen/task_detail/step/$TASK_ID/$STEP_ID"
+        }
+
+    }
+
 
 }
