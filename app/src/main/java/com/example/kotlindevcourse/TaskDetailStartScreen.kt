@@ -60,10 +60,6 @@ fun TaskDetailStartScreen(
 
     Log.d("specificTask", specificTask.toString())
 
-
-
-
-
     /* Set page structure using Scaffold */
     Scaffold(
 
@@ -80,7 +76,7 @@ fun TaskDetailStartScreen(
                 ),
                 title = {
                     Text(
-                        text="Task Detail Title",
+                        text= specificTask.action,
                         fontWeight = FontWeight.ExtraBold,
                         color = Color( 0xffffffff)
                     )
@@ -177,6 +173,7 @@ fun TaskDetailStartScreen(
 
             TaskDetailStartScreenPageContainer(
                 navController =  navController,
+                specificTask = specificTask,
 //                TASK_ID = TASK_ID,
                 modifier = Modifier
             )
@@ -192,6 +189,7 @@ fun TaskDetailStartScreen(
 @Composable
 fun TaskDetailStartScreenPageContainer(
     navController: NavHostController,
+    specificTask: FieldTask,
     modifier: Modifier = Modifier
 ){
 
@@ -225,7 +223,7 @@ fun TaskDetailStartScreenPageContainer(
             ) {
                 Image(
                     painter = lubeCupImage,
-                    contentDescription = "Pump Motor Lube Cup",
+                    contentDescription = specificTask.action,
                     contentScale = ContentScale.FillWidth,
                     modifier = modifier
                         .fillMaxWidth()
@@ -251,7 +249,7 @@ fun TaskDetailStartScreenPageContainer(
 
     ){
         Text(
-            text = "#1 Lube Oil Change",
+            text = specificTask.action,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.ExtraBold
         )
