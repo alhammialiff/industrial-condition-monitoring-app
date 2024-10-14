@@ -174,7 +174,7 @@ fun TaskDetailStartScreen(
             TaskDetailStartScreenPageContainer(
                 navController =  navController,
                 specificTask = specificTask,
-//                TASK_ID = TASK_ID,
+                TASK_ID = TASK_ID,
                 modifier = Modifier
             )
 
@@ -190,8 +190,17 @@ fun TaskDetailStartScreen(
 fun TaskDetailStartScreenPageContainer(
     navController: NavHostController,
     specificTask: FieldTask,
-    modifier: Modifier = Modifier
+    TASK_ID: Int,
+    modifier: Modifier = Modifier,
+    tasksViewModel: TasksViewModel = viewModel()
 ){
+
+    /* Extract Task based on TASK_ID (i.e index of task selected by user) */
+    val taskMasterList = tasksViewModel.getInitTaskList().getAllTasks()
+    var selectedTask = taskMasterList[TASK_ID]
+    Log.d("[Tut Start]taskMasterList", taskMasterList.toString())
+
+    Log.d("[Tut Start]SELECTEDTASK", selectedTask.toString())
 
     val lubeCupImage = painterResource(id = R.drawable.lube_oil_cup)
     val areaMapImage = painterResource(id = R.drawable.area_map)
@@ -340,15 +349,9 @@ fun TaskDetailStartScreenPageContainer(
         /* TODO: Button Row */
         Row(
             verticalAlignment = Alignment.Bottom,
-            modifier = modifier.weight(1f)
+            modifier = modifier.weight(1f),
+
         ){
-
-            /* TODO - TO EXTRACT TASK BY INDEX */
-//            val taskMasterList = taskViewModel.getInitTaskList()
-
-//            Log.d("taskMasterList", taskMasterList.toString())
-            /*val iterableTaskList = taskMasterList.getTask().listIterator()
-            val task = iterableTaskList[TASK_ID]*/
 
             /* Back Button */
             Surface(
