@@ -45,5 +45,15 @@ sealed class Screen(val route: String){
 
     }
 
+    object TaskDetailComplete: Screen(route = "home_screen/task_detail/{$TASK_ID}/complete"){
+
+        fun passTaskIDandStepID(
+            TASK_ID: Int
+        ): String{
+            return "home_screen/task_detail/$TASK_ID/complete"
+        }
+
+    }
+
 
 }

@@ -419,7 +419,6 @@ fun TaskDetailStartScreenPageContainer(
                     Text(
                         text = "Start",
                         color = Color.White,
-
                     )
 
                 }

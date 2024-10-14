@@ -1,3 +1,4 @@
+
 package com.example.kotlindevcourse
 
 import android.util.Log
@@ -9,9 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -25,6 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,21 +38,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlindevcourse.states.TasksViewModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun TaskDetailStepScreen(
-    navController: NavController,
-    TASK_ID: Int?,
-    STEP_ID: Int?
+fun TaskDetailCompleteScreen(
+    navController: NavHostController,
+    TASK_ID: Int? = 0,
+    taskViewModel: TasksViewModel = viewModel()
 ){
+
+    Log.d("Task Details Complete - TASK_ID", TASK_ID.toString())
+
+    /* Extract specific task by TASK_ID from Task View Model
+    *   TASK_ID is the selected (clicked) Task Card's array index
+    *
+    * */
+    val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)
+
+    Log.d("specificTask", specificTask.toString())
 
     /* [Debug] Current Nav Route */
     val currentRoute = navController.currentBackStackEntry?.destination?.route
@@ -68,7 +84,7 @@ fun TaskDetailStepScreen(
                 ),
                 title = {
                     Text(
-                        text="Task Step",
+                        text= specificTask.action,
                         fontWeight = FontWeight.ExtraBold,
                         color = Color( 0xffffffff)
                     )
@@ -157,19 +173,15 @@ fun TaskDetailStepScreen(
             innerPadding ->
 
         /* [Log] Check retrieved TASK_ID from Home Screen */
-        Log.d("In Step","In Composable");
-        Log.d("TaskDetailStepScreen - TASK_ID", TASK_ID.toString())
-
 
         /* This column houses the container that encapsulates the layout */
         Column(
             modifier = Modifier.padding(innerPadding)
         ){
 
-            TaskDetailStepScreenPageContainer(
+            TaskDetailCompleteScreenPageContainer(
                 navController =  navController,
                 TASK_ID = TASK_ID,
-                STEP_ID = STEP_ID,
                 modifier = Modifier
             )
 
@@ -182,180 +194,127 @@ fun TaskDetailStepScreen(
 
 /* This is the container that encapsulates all the components residing in this screen */
 @Composable
-fun TaskDetailStepScreenPageContainer(
-    navController: NavController,
-    TASK_ID: Int?,
-    STEP_ID: Int?,
+fun TaskDetailCompleteScreenPageContainer(
+    navController: NavHostController,
+    TASK_ID: Int,
     modifier: Modifier = Modifier,
     tasksViewModel: TasksViewModel = viewModel()
 ){
 
-    var task = tasksViewModel.getInitTaskList().getTaskByIndex(TASK_ID!!)
-    var stepNum = STEP_ID?.plus(1)
-    var stepTitle = "Step $stepNum"
-    Log.d("Task Step One", task.taskSteps[0].toString())
+    /* Extract Task based on TASK_ID (i.e index of task selected by user) */
+    val taskMasterList = tasksViewModel.getInitTaskList().getAllTasks()
+    var selectedTask = taskMasterList[TASK_ID]
+    Log.d("[Tut Complete] taskMasterList", taskMasterList.toString())
 
-    val lubeCupImage = painterResource(id = R.drawable.lube_oil_cup)
-    val areaMapImage = painterResource(id = R.drawable.area_map)
+    Log.d("[Tut Complete] SELECTEDTASK", selectedTask.toString())
 
-    Box(
+    /*
+    *   Extract Task Title (action) and display it in the congratulatory message
+    * */
+    Column(
         modifier = modifier
             .background(Color(0xff00A19B))
-    ) {
+            .fillMaxWidth()
+            .fillMaxHeight()
 
-        /* Components on this page is structured in this column */
+    ){
+
+        /* Column for Congratulatory Message
+        *
+        *  These nested columns are defined so that
+        *  congratulatory message is somewhat centered
+        *  and button can be pushed to the bottom of the screen
+        *  via the float value in fillMaxHeight prop
+        * */
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center,
             modifier = modifier
-//            .fillMaxWidth()
-//            .fillMaxHeight(0.5f)
+                .fillMaxWidth()
+                .fillMaxHeight(0.7f)
                 .padding(20.dp)
+
         ) {
 
-            /* TODO: Lube Cup Image */
-            Surface(
-                shadowElevation = 8.dp,
-                shape = RoundedCornerShape(30.dp),
-                modifier = Modifier
-            ) {
-                Image(
-                    painter = lubeCupImage,
-                    contentDescription = "Pump Motor Lube Cup",
-                    contentScale = ContentScale.FillWidth,
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 30.dp,
-                                topEnd = 30.dp,
-                                bottomStart = 30.dp,
-                                bottomEnd = 30.dp
-                            )
-                        )
+            /* Thumbs up icon */
+            Image(
+                painterResource(R.drawable.thumbs_up),
+                contentDescription = "Completed",
+                modifier = modifier
+                    .size(100.dp)
+                    .align(
+                        alignment = Alignment.CenterHorizontally
+                    )
+                    .padding(
+                        bottom=10.dp
+                    )
+            )
+
+            /* Task Name */
+            Text(
+                text = selectedTask.action,
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.White,
+                fontWeight = FontWeight(800),
+                textAlign = TextAlign.Center,
+                modifier = modifier
+                    .align(
+                        alignment = Alignment.CenterHorizontally
+                    )
+            )
+
+            /* Congratulatory Message */
+            Text(
+                text = "Task Completed!",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White,
+                fontWeight = FontWeight(800),
+                textAlign = TextAlign.Center,
+                modifier = modifier
+                    .align(
+                        alignment = Alignment.CenterHorizontally
+                    )
+
+
+            )
+
+        }
+
+        /* Column for Button */
+        Column(
+            verticalArrangement = Arrangement.Bottom,
+            modifier = modifier
+                .padding(20.dp)
+                .align(
+                    alignment = Alignment.CenterHorizontally
                 )
-            }
-
-        }
-    }
-
-    /* TODO: STOP HERE 07/10/2024
-    *   Center text horizontally */
-    Column(
-        modifier = modifier
-            .padding(20.dp)
-
-    ){
-
-        /* Step Number goes here */
-        Text(
-            text = stepTitle,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.ExtraBold
-        )
-
-        /* Step Description goes here */
-        Text(
-            text = task.taskSteps[STEP_ID!!].description,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.SemiBold
-        )
-
-        /* TODO: Button Row */
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            modifier = modifier.weight(1f)
+                .fillMaxHeight()
         ){
+            Button(
+                onClick = {
+                    navController.navigate(
+                        route = Screen.Home.route
+                    )
+                },
+                modifier = modifier
+                    .fillMaxWidth()
 
-
-
-            /* Back Button */
-            Surface(
-                shadowElevation = 4.dp,
-                shape = RoundedCornerShape(20.dp),
-                color = Color(0xffd4d4d4),
-                modifier = Modifier.padding(3.dp)
             ){
 
-                Button(
-                    onClick = { /*TODO*/ },
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonColors(
-                        containerColor = Color(0xffd4d4d4),
-                        contentColor = Color(0xffd4d4d4),
-                        disabledContainerColor = Color(0xffd4d4d4),
-                        disabledContentColor = Color(0xffd4d4d4)
-                    ),
-                    modifier = modifier.fillMaxWidth(0.5f)
-
-                ) {
-
-                    Text(
-                        text = "Back",
-                        color = Color.Black,
-                    )
-
-                }
+                Text(
+                    text = "Back to Dashboard",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = modifier.padding(3.dp)
+                )
 
             }
-
-            /* Next Button */
-            Surface(
-                shadowElevation = 4.dp,
-                shape = RoundedCornerShape(20.dp),
-                color = Color(0xff00736f),
-                modifier = Modifier.padding(3.dp)
-            ){
-
-                Button(
-                    onClick = {
-                        Log.d("STEP_ID", STEP_ID.toString())
-                        Log.d("Total Steps", task.taskSteps.size.toString())
-
-                        if(STEP_ID < task.taskSteps.size - 1){
-
-                            navController.navigate(
-                                route = Screen.TaskDetailStep.passTaskIDandStepID(
-                                    TASK_ID = TASK_ID,
-                                    STEP_ID = STEP_ID + 1
-                                )
-                            )
-
-                        }else{
-
-                            navController.navigate(
-                                route = Screen.TaskDetailComplete.passTaskIDandStepID(
-                                    TASK_ID = TASK_ID
-                                )
-                            )
-
-                        }
-
-                    },
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonColors(
-                        containerColor = Color(0xff00736f),
-                        contentColor = Color(0xff00736f),
-                        disabledContainerColor = Color(0xff00736f),
-                        disabledContentColor = Color(0xff00736f)
-                    ),
-                    modifier = modifier.fillMaxWidth()
-                ) {
-
-                    Text(
-                        text = "Next",
-                        color = Color.White
-                    )
-
-                }
-
-            }
-
         }
 
-
-
     }
+
+
+
+
 
 
 
@@ -366,12 +325,10 @@ fun TaskDetailStepScreenPageContainer(
 
 @Composable
 @PreviewScreenSizes()
-fun TaskDetailStepScreenPreview(modifier: Modifier = Modifier){
+fun TaskDetailCompleteScreenPreview(modifier: Modifier = Modifier){
 
-    TaskDetailStepScreen(
-        navController = rememberNavController(),
-        TASK_ID = 99,
-        STEP_ID = 0
+    TaskDetailCompleteScreen(
+        navController = rememberNavController()
     )
 
 }

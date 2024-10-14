@@ -14,6 +14,7 @@ import com.example.kotlindevcourse.STEP_ID
 import com.example.kotlindevcourse.Screen
 import com.example.kotlindevcourse.TASK_ID
 import com.example.kotlindevcourse.TASK_TUTORIAL_ROUTE
+import com.example.kotlindevcourse.TaskDetailCompleteScreen
 import com.example.kotlindevcourse.TaskDetailStartScreen
 import com.example.kotlindevcourse.TaskDetailStepScreen
 import com.example.kotlindevcourse.UserProfileScreen
@@ -80,6 +81,26 @@ fun NavGraphBuilder.taskTutorialNavGraph(
                 STEP_ID = it.arguments?.getInt(STEP_ID, 0),
             )
 
+
+        }
+
+        /* Task Detail Complete Screen Route */
+        composable(
+            route = Screen.TaskDetailComplete.route,
+            arguments = listOf(
+                /* [To pass to this route] TASK_ID */
+                navArgument(TASK_ID){
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            )
+        ){
+
+            /* Invoke Task Detail Step Screen */
+            TaskDetailCompleteScreen(
+                navController = navController,
+                TASK_ID = it.arguments?.getInt(TASK_ID, 0)
+            )
 
         }
 
