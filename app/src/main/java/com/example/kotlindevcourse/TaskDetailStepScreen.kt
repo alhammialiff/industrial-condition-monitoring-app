@@ -34,15 +34,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetailStepScreen(
-    navController: NavHostController,
-    TASK_ID: Int?
+    navController: NavController,
+    TASK_ID: Int?,
+    STEP_ID: Int?
 ){
+
+    /* [Debug] Current Nav Route */
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    Log.d("CURRENT ROUTE", currentRoute.toString())
+
     /* Set page structure using Scaffold */
     Scaffold(
 
@@ -173,7 +180,7 @@ fun TaskDetailStepScreen(
 /* This is the container that encapsulates all the components residing in this screen */
 @Composable
 fun TaskDetailStepScreenPageContainer(
-    navController: NavHostController,
+    navController: NavController,
     TASK_ID: Int?,
     modifier: Modifier = Modifier
 ){
@@ -185,7 +192,6 @@ fun TaskDetailStepScreenPageContainer(
         modifier = modifier
             .background(Color(0xff00A19B))
     ) {
-
 
         /* Components on this page is structured in this column */
         Column(
@@ -244,92 +250,6 @@ fun TaskDetailStepScreenPageContainer(
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.SemiBold
         )
-
-        /* Training Overview Card */
-        /*Column(
-            modifier = modifier
-                .padding(top = 20.dp)
-                .background(Color(0xff00A19B), RoundedCornerShape(12.dp))
-                .padding(20.dp)
-
-        ){
-
-            Row(
-                modifier = modifier
-                    .padding(bottom = 10.dp)
-            ){
-
-
-                Image(
-                    painterResource(R.drawable.step_count_foreground),
-                    contentDescription = "No. of Steps",
-                    modifier = Modifier
-                        .size(20.dp)
-                        .padding(end = 5.dp)
-                )
-
-                Text(
-                    text = "3 steps",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = modifier.weight(1f)
-                )
-
-                Image(
-                    painterResource(R.drawable.time),
-                    contentDescription = "Approx. Task Duration",
-                    modifier = Modifier.size(20.dp)
-                )
-
-                Text(
-                    text = "20 mins",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = modifier.weight(1f)
-                )
-
-            }
-
-            Row(
-                modifier = modifier
-            ){
-
-                Image(
-                    painterResource(R.drawable.pax_foreground),
-                    contentDescription = "Approx. Task Duration",
-                    modifier = Modifier.size(20.dp)
-                )
-
-                Text(
-                    text = "2 pax",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = modifier.weight(1f)
-                )
-
-                Image(
-                    painterResource(R.drawable.difficulty_foreground),
-                    contentDescription = "Approx. Task Duration",
-                    modifier = Modifier.size(20.dp)
-                )
-
-                Text(
-                    text = "Easy",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = modifier.weight(1f)
-                )
-
-            }
-
-        }*/
-
-
-
 
         /* TODO: Button Row */
         Row(
@@ -391,14 +311,12 @@ fun TaskDetailStepScreenPageContainer(
 
                     Text(
                         text = "Next",
-                        color = Color.White,
-
-                        )
+                        color = Color.White
+                    )
 
                 }
 
             }
-
 
         }
 
@@ -419,7 +337,8 @@ fun TaskDetailStepScreenPreview(modifier: Modifier = Modifier){
 
     TaskDetailStepScreen(
         navController = rememberNavController(),
-        TASK_ID = 99
+        TASK_ID = 99,
+        STEP_ID = 0
     )
 
 }

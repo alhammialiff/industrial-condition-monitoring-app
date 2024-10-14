@@ -27,6 +27,7 @@ fun NavGraphBuilder.homeNavGraph(
 ){
     // Home Navigation Graph
     navigation(
+        /* Screen that shows up first in Home Screen */
         startDestination = Screen.Home.route,
         route = HOME_GRAPH_ROUTE
     ){
@@ -73,26 +74,22 @@ fun NavGraphBuilder.homeNavGraph(
             NotificationScreen(navController = navController)
         }
 
-        /* (Sub-link 3) Task Card Route */
-        composable(
+        /* (Sub-link 3) Task Card (Task Detail Start) Route */
+        /*composable(
             route = Screen.TaskDetailStart.route,
             arguments = listOf(
-                 /*[To pass to this route] TASK_ID */
+                 *//*[To pass to this route] TASK_ID *//*
                 navArgument(TASK_ID){
                     type = NavType.IntType
                 },
 
-                 /*[To pass to this route] STEP_ID */
-                navArgument(STEP_ID){
-                    type = NavType.IntType
-                }
             )
         ){
-            /* [Log] Arguments for Task Detail Screen */
-//            Log.d("Home Nav Graph - Task Details - Args - ", it.arguments?.getInt(TASK_ID).toString())
-//            Log.d("Home Nav Graph - Task Details - Screen.TaskDetailStep - ", Screen.TaskDetailStep.route)
+            *//* [Log] Arguments for Task Detail Screen *//*
+            *//*Log.d("Home Nav Graph - Task Details - Args - ", it.arguments?.getInt(TASK_ID).toString())
+            Log.d("Home Nav Graph - Task Details - Screen.TaskDetailStep - ", Screen.TaskDetailStep.route)*//*
 
-            /* Invoke Task Detail Screen */
+            *//* Invoke Task Detail Screen *//*
             TaskDetailStartScreen(
                 navController = navController,
                 TASK_ID = it.arguments?.getInt(TASK_ID, 0)
@@ -101,11 +98,28 @@ fun NavGraphBuilder.homeNavGraph(
 
             Log.d("Home Nav Graph - Nested NavHost Task Tutorial","In NavHost")
 
-            /*Task Tutorial Nav Graph */
+            *//*Task Tutorial Nav Graph *//*
             taskTutorialNavGraph(navController = navController)
 
-        }
+        }*/
 
+        /*Task Tutorial Nav Graph
+        * [14/10/2024]
+        * [Solution to "Navigation destination that matches request NavDeepLinkRequest..."]
+        * There were two composables() that points to TaskDetailStartScreen().
+        *  - One in this nav graph
+        *  - The other in TaskTutorialNavGraph
+        *
+        * This causes the route to be confused which TaskDetailStartScreen should it route to.
+        * Therefore, this error happens when user clicks 'Start' to route to TaskDetailStepScreen
+        * but failed because there are two identical composables defined in two different nav graphs.
+        *
+        * [Resolution]
+        * Removed TaskDetailStartScreen() in this nav graph, and define it only in
+        * TaskTutorialNavGraph.
+        *
+        * */
+        taskTutorialNavGraph(navController = navController)
 
         /* TODO; Search Route */
 

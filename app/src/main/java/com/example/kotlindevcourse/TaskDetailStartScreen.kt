@@ -60,6 +60,10 @@ fun TaskDetailStartScreen(
 
     Log.d("specificTask", specificTask.toString())
 
+    /* [Debug] Current Nav Route */
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    Log.d("CURRENT ROUTE", currentRoute.toString())
+
     /* Set page structure using Scaffold */
     Scaffold(
 
@@ -393,10 +397,11 @@ fun TaskDetailStartScreenPageContainer(
             ){
 
                 Button(
+
                     onClick = { navController.navigate(
                         route = Screen.TaskDetailStep.passTaskIDandStepID(
-                            TASK_ID = 0,
-                            STEP_ID = 1
+                            TASK_ID = TASK_ID,
+                            STEP_ID = 0
                         )
                     ) },
                     /*onClick = {

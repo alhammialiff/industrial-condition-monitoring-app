@@ -878,8 +878,7 @@ fun TabContent(
             * */
             onTaskCardClicked.navigate(
                 route = Screen.TaskDetailStart.passTaskIDandStepID(
-                    TASK_ID = task.taskID,
-                    STEP_ID = task.taskSteps[taskIndex].stepID
+                    TASK_ID = task.taskID
                 )
             )
 

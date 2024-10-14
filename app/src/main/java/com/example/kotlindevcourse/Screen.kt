@@ -24,24 +24,23 @@ sealed class Screen(val route: String){
     object Notification: Screen(route = "home_screen/notification_screen")
 //    object TaskDetailStart: Screen(route = "home_screen/task_detail")
 
-    object TaskDetailStart: Screen(route = "home_screen/task_detail/{$TASK_ID}/{$STEP_ID}"){
+    object TaskDetailStart: Screen(route = "home_screen/task_detail/{$TASK_ID}"){
 
         fun passTaskIDandStepID(
-            TASK_ID: Int,
-            STEP_ID: Int
+            TASK_ID: Int
         ): String{
-            return "home_screen/task_detail/$TASK_ID/$STEP_ID"
+            return "home_screen/task_detail/$TASK_ID"
         }
 
     }
 
-    object TaskDetailStep: Screen(route = "home_screen/task_detail/step/{$TASK_ID}/{$STEP_ID}"){
+    object TaskDetailStep: Screen(route = "home_screen/task_detail/{$TASK_ID}/step/{$STEP_ID}"){
 
         fun passTaskIDandStepID(
             TASK_ID: Int,
             STEP_ID: Int
         ): String{
-            return "home_screen/task_detail/step/$TASK_ID/$STEP_ID"
+            return "home_screen/task_detail/$TASK_ID/step/$STEP_ID"
         }
 
     }

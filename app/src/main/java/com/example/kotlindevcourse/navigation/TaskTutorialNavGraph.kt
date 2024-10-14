@@ -36,13 +36,12 @@ fun NavGraphBuilder.taskTutorialNavGraph(
                 /* [To pass to this route] TASK_ID */
                 navArgument(TASK_ID){
                     type = NavType.IntType
+                    defaultValue = 0
                 },
 
-                /* [To pass to this route] STEP_ID */
-                navArgument(STEP_ID){
-                    type = NavType.IntType
-                }
         )){
+
+            Log.d("Task Tutorial Graph","Routing to Task Detail Start")
 
             TaskDetailStartScreen(
                 navController = navController,
@@ -51,31 +50,34 @@ fun NavGraphBuilder.taskTutorialNavGraph(
 
         }
 
-        /* Task Detail Step Screen Route*/
+        /* Task Detail Step Screen Route */
         composable(
             route = Screen.TaskDetailStep.route,
             arguments = listOf(
                 /* [To pass to this route] TASK_ID */
                 navArgument(TASK_ID){
                     type = NavType.IntType
+                    defaultValue = 0
                 },
 
                 /* [To pass to this route] STEP_ID */
                 navArgument(STEP_ID){
                     type = NavType.IntType
+                    defaultValue = 0
                 }
             )
         ){
 
-            /* [Log] Arguments for Task Detail Screen */
+            Log.d("Task Tutorial Graph","Routing to Task Detail STEP")
+
+            /* [Log] Arguments for Task Detail Step Screen */
             Log.d("Task Tutorial Route - Task Details - Args - ", it.arguments?.getInt(TASK_ID).toString())
 
-            /* Invoke Task Detail Step Screen
-            * TODO; Rename this to Task Detail Step Screen
-            * */
+            /* Invoke Task Detail Step Screen */
             TaskDetailStepScreen(
                 navController = navController,
-                TASK_ID = it.arguments?.getInt(TASK_ID, 0)
+                TASK_ID = it.arguments?.getInt(TASK_ID, 0),
+                STEP_ID = it.arguments?.getInt(STEP_ID, 0),
             )
 
 
