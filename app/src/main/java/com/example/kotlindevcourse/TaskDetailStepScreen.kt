@@ -34,9 +34,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlindevcourse.states.TasksViewModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -167,6 +169,7 @@ fun TaskDetailStepScreen(
             TaskDetailStepScreenPageContainer(
                 navController =  navController,
                 TASK_ID = TASK_ID,
+                STEP_ID = STEP_ID,
                 modifier = Modifier
             )
 
@@ -182,8 +185,15 @@ fun TaskDetailStepScreen(
 fun TaskDetailStepScreenPageContainer(
     navController: NavController,
     TASK_ID: Int?,
-    modifier: Modifier = Modifier
+    STEP_ID: Int?,
+    modifier: Modifier = Modifier,
+    tasksViewModel: TasksViewModel = viewModel()
 ){
+
+    var task = tasksViewModel.getInitTaskList().getTaskByIndex(TASK_ID!!)
+    var stepNum = STEP_ID?.plus(1)
+    var stepTitle = "Step $stepNum"
+    Log.d("Task Step One", task.taskSteps[0].toString())
 
     val lubeCupImage = painterResource(id = R.drawable.lube_oil_cup)
     val areaMapImage = painterResource(id = R.drawable.area_map)
@@ -239,14 +249,14 @@ fun TaskDetailStepScreenPageContainer(
 
         /* Step Number goes here */
         Text(
-            text = "Step 1",
+            text = stepTitle,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.ExtraBold
         )
 
         /* Step Description goes here */
         Text(
-            text = "Step Description Here",
+            text = task.taskSteps[STEP_ID!!].description,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.SemiBold
         )
@@ -289,7 +299,7 @@ fun TaskDetailStepScreenPageContainer(
 
             }
 
-            /* Start Button */
+            /* Next Button */
             Surface(
                 shadowElevation = 4.dp,
                 shape = RoundedCornerShape(20.dp),
@@ -298,7 +308,14 @@ fun TaskDetailStepScreenPageContainer(
             ){
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        navController.navigate(
+                            route = Screen.TaskDetailStep.passTaskIDandStepID(
+                                TASK_ID = TASK_ID,
+                                STEP_ID = STEP_ID + 1
+                            )
+                        )
+                    },
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonColors(
                         containerColor = Color(0xff00736f),

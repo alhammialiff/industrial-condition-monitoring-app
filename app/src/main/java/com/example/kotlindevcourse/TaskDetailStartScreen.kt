@@ -398,15 +398,14 @@ fun TaskDetailStartScreenPageContainer(
 
                 Button(
 
-                    onClick = { navController.navigate(
-                        route = Screen.TaskDetailStep.passTaskIDandStepID(
-                            TASK_ID = TASK_ID,
-                            STEP_ID = 0
+                    onClick = {
+                        navController.navigate(
+                            route = Screen.TaskDetailStep.passTaskIDandStepID(
+                                TASK_ID = TASK_ID,
+                                STEP_ID = 0
+                            )
                         )
-                    ) },
-                    /*onClick = {
-
-                    },*/
+                    },
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonColors(
                         containerColor = Color(0xff00736f),
