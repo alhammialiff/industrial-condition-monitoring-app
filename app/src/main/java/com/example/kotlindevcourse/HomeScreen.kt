@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -67,7 +68,7 @@ import com.example.kotlindevcourse.states.TasksViewModel
 fun HomeScreen(
     onUserProfileButtonClicked: () -> Unit,
     onNotificationButtonClicked: () -> Unit,
-    onTaskCardClicked: NavHostController
+    onTaskCardClicked: NavHostController,
 ) {
 
     Scaffold(
@@ -78,15 +79,12 @@ fun HomeScreen(
 
                 colors = topAppBarColors(
                     containerColor = Color(0xff00A19B),
-                    titleContentColor = MaterialTheme.colorScheme.primary
+                    titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = {
-                    Text(
-                        text = "Field Work Ecosystem",
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color(0xffffffff)
-                    )
-                }
+                title={},
+
+                /* This modifier is to shorten the default height of TopAppBar*/
+                modifier=Modifier.height(5.dp)
 
             )
 
@@ -362,6 +360,7 @@ fun ProfilePictureContainer(
 
 
     }
+
 }
 
 //Composable Function that can be used by setContent()
@@ -385,18 +384,21 @@ fun BodyContent(
         // horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
 //            .width(width)
-            .padding(
-                /* This padding is to offset BottomAppBar height so that
+            /*.padding(
+                *//* This padding is to offset BottomAppBar height so that
                 *  inner content is not hidden behind it when scrolled
-                * */
+                * *//*
                 bottom = 35.dp
-            )
+            )*/
 
     ) {
 
         SalutationContainer(
             modifier = Modifier
                 .background(Color(0xff00A19B))
+                .padding(
+                    top=20.dp
+                )
         )
 
         QuickAccessBarContainer(
