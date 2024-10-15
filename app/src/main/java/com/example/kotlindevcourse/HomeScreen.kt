@@ -2,18 +2,22 @@ package com.example.kotlindevcourse
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 
@@ -32,12 +36,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ComposableTargetMarker
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -193,11 +200,6 @@ fun HomeScreen(
                 modifier = Modifier
             )
 
-            /* [NOT IN USE] Search Bar */
-            // SearchBarFormGroup()
-            /* [NOT IN USE] Username Field*/
-            // UserCredentialFormGroup()
-
         }
 
     }
@@ -277,60 +279,6 @@ fun OverviewSection(
             numOfOutstandingTasks = numOfOutstandingTasks,
         )
 
-        // Should provide a column of num breakdowns of outstanding tasks
-//        FlowColumn(
-//            horizontalArrangement = Arrangement.End,
-//            modifier = modifier.padding(
-//                0.dp,
-//                0.dp
-//            ),
-//        ) {
-//
-//            Text(
-//                text = "2 lube oil change",
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier
-//                    .padding(0.dp, 0.dp, 0.dp, 4.dp)
-//                    .border(
-//                        border = BorderStroke(1.dp, Color(0xffe0c249)),
-//                        shape = RoundedCornerShape(12.dp),
-//                    )
-//                    .background(Color(0xffe0c249), RoundedCornerShape(12.dp))
-//                    .padding(10.dp)
-//
-//
-//            )
-//            //            HorizontalDivider()
-//            Text(
-//                text = "2 pump shutdown",
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier
-//                    .padding(0.dp, 8.dp, 0.dp, 4.dp)
-//                    .border(
-//                        border = BorderStroke(1.dp, Color(0xffe38329)),
-//                        shape = RoundedCornerShape(12.dp),
-//                    )
-//                    .background(Color(0xffe38329), RoundedCornerShape(12.dp))
-//                    .padding(10.dp)
-//
-//            )
-//            //            HorizontalDivider()
-//            Text(
-//                text = "2 isolation works",
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier
-//                    .padding(0.dp, 8.dp, 0.dp, 0.dp)
-//                    .border(
-//                        border = BorderStroke(1.dp, Color(0xffee87f5)),
-//                        shape = RoundedCornerShape(12.dp),
-//                    )
-//                    .background(Color(0xffee87f5), RoundedCornerShape(12.dp))
-//                    .padding(10.dp)
-//            )
-//            //            HorizontalDivider()
-//
-//
-//        }
     }
 
 }
@@ -379,9 +327,9 @@ fun OverviewNumberCard(
             fontSize = 20.sp,
             style = MaterialTheme.typography.labelLarge,
             color = Color.White,
-            modifier = Modifier.padding(bottom=20.dp)
+            modifier = Modifier
+                .padding(bottom=20.dp)
         )
-
 
     }
 
@@ -389,6 +337,31 @@ fun OverviewNumberCard(
     /* Outline event handler that changes state of this composable */
 
 
+}
+
+@Composable
+fun ProfilePictureContainer(
+    profilePicture: String = "",
+    modifier: Modifier = Modifier
+){
+    Box(
+        modifier= modifier
+    ){
+
+
+        Image(
+            painter = painterResource(id = R.drawable.user_24),
+            contentDescription = "Profile Picture",
+            contentScale = ContentScale.Crop,
+            modifier = modifier
+                .size(70.dp)
+                .clip(CircleShape)
+                .border(2.dp, Color(0xffa4e8ef), CircleShape)
+        )
+
+
+
+    }
 }
 
 //Composable Function that can be used by setContent()
@@ -421,6 +394,11 @@ fun BodyContent(
 
     ) {
 
+        SalutationContainer(
+            modifier = Modifier
+                .background(Color(0xff00A19B))
+        )
+
         QuickAccessBarContainer(
             onUserProfileButtonClicked = onUserProfileButtonClicked,
             onNotificationButtonClicked = onNotificationButtonClicked,
@@ -444,6 +422,51 @@ fun BodyContent(
             modifier = modifier
         )
 
+
+
+
+    }
+
+
+}
+
+@Composable
+fun SalutationContainer(
+    modifier: Modifier = Modifier
+){
+
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+    ){
+
+        Column(
+            modifier = modifier
+        ){
+
+            Text(
+                text = "Welcome,",
+                color = Color(0xffa4e8ef),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = "John Doe",
+                color = Color.White,
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.ExtraBold
+
+            )
+
+        }
+
+        ProfilePictureContainer(
+            profilePicture = "",
+            modifier = modifier
+        )
 
 
 
