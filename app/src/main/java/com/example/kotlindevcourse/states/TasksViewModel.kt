@@ -18,7 +18,7 @@ import com.example.kotlindevcourse.TaskList
 * */
 class TasksViewModel: ViewModel(){
 
-    /* [TASK DATA]
+    /* [DUMMY TASK DATA]
     *  Data is prepped for consumption over here via
     *  mutableListOf.
     *
@@ -119,6 +119,7 @@ class TasksViewModel: ViewModel(){
 
     }
 
+    /* State handler to get current task ID, which is the index in tasklist */
     private fun getCurrentTaskIndex(): Int{
 
         return currentTaskIndex!!
