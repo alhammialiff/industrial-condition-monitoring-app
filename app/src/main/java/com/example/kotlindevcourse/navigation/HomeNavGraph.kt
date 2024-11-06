@@ -34,8 +34,10 @@ fun NavGraphBuilder.homeNavGraph(
 
         // (Start Route Declaration) Home Route
         composable(
-            route = Screen.Home.route
+            route = Screen.Home.route + "/{username}"
         ){
+
+            val username = it.arguments?.getString("username")
 
             HomeScreen(
 
@@ -47,7 +49,8 @@ fun NavGraphBuilder.homeNavGraph(
                     navController.navigate(Screen.Notification.route)
                 },
 
-                onTaskCardClicked = navController
+                onTaskCardClicked = navController,
+                fromLoginNavArgs_Username = if (username !== null) username else ""
 
                 /* [Note]
                 *  Because we need to pass arguments into Task Details,

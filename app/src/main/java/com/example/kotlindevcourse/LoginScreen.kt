@@ -1,5 +1,6 @@
 package com.example.kotlindevcourse
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import com.example.kotlindevcourse.states.AuthenticationViewModel
 
 @Composable
@@ -102,6 +104,7 @@ fun LoginContainer(
         /* Username Field */
         TextField(
             value = usernameInput,
+            singleLine = true,
             label = {
                 Text("Username")
             },
@@ -157,12 +160,45 @@ fun LoginContainer(
 
             /* Prop handles pwd visibility when passwordVisibility flag toggles */
             visualTransformation = if(passwordVisibility) VisualTransformation.None else PasswordVisualTransformation()
+
         );
 
         /* Button */
         Button(
             onClick={
-                navController.navigate(route = Screen.Home.route)
+
+                /* Navigation based on auth result
+                *
+                *  [06/11/2024] HOW DO WE PASS USERNAME DATA ON SUCCESSFUL AUTH?
+                *   (1) If auth successful, pass username string as args in nav route
+                *   (2) Else, redirect back to Login Screen
+                *   Note;
+                *       After trying ways to process authenticated user data in ViewModel
+                *       so that it may be retrieved in Home Screen (failed), passing authed
+                *       user data is rethought and rewired differently. Currently, a working
+                *       solution is to pass username string data by appending it onto route
+                *       string.
+                * */
+                if(authenticationViewModel.getAuthResult()){
+
+                    Log.d("[Auth Success]","Redirecting to Home")
+
+                    /* [To remember] We can pass string arg in nav route
+                    *                by performing concat and replace like below
+                    * */
+                    navController.navigate(
+                        route = Screen.Home.route + "/{username}".replace(
+                            oldValue = "{username}",
+                            newValue = usernameInput
+                        )
+                    )
+                }else{
+
+                    Log.d("[Auth Success]","Redirecting to Login")
+                    navController.navigate(route = Screen.Login.route)
+
+                }
+
             },
             modifier = modifier
                 .fillMaxWidth()

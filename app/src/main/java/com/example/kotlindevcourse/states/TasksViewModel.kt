@@ -104,7 +104,7 @@ class TasksViewModel: ViewModel(){
     )
 
     // Mutable Live Data for Current Task Index
-//    private var _currentTaskIndex: MutableLiveData<Int> = MutableLiveData(0)
+    //    private var _currentTaskIndex: MutableLiveData<Int> = MutableLiveData(0)
     private val _currentTaskIndex: MutableLiveData<Int> = MutableLiveData<Int>()
 
     // Accessible data to be passed over as index to access TaskList

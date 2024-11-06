@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,14 +36,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableTargetMarker
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -59,7 +62,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlindevcourse.states.AuthenticationViewModel
 import com.example.kotlindevcourse.states.TasksViewModel
+import com.example.kotlindevcourse.states.UserViewModel
 
 //import com.example.kotlindevcourse.navigation.HomeScreenNav
 
@@ -69,7 +74,13 @@ fun HomeScreen(
     onUserProfileButtonClicked: () -> Unit,
     onNotificationButtonClicked: () -> Unit,
     onTaskCardClicked: NavHostController,
+    fromLoginNavArgs_Username: String = ""
 ) {
+
+    /* [Debug] Backstack Entry Record */
+    var backStackEntry = onTaskCardClicked.currentBackStackEntry
+    Log.d("[Curr BSEntry]", backStackEntry.toString())
+    Log.d("[username arg from BSEntry]", fromLoginNavArgs_Username)
 
     Scaffold(
         containerColor = Color.White,
@@ -172,11 +183,9 @@ fun HomeScreen(
         }
     ) {
 
-            innerPadding ->
+        innerPadding ->
 
         /*https://medium.com/@mathroda/nested-navigation-graph-in-jetpack-compose-with-bottom-navigation-d983c2d4119f*/
-
-
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -195,14 +204,13 @@ fun HomeScreen(
                 height = screenHeight,
                 message = "Body Content",
                 from = "Quick Access",
-                modifier = Modifier
+                modifier = Modifier,
+                username = fromLoginNavArgs_Username
             )
 
         }
 
     }
-
-
 
 }
 
@@ -235,8 +243,6 @@ fun OverviewSectionGroup(fieldTaskViewModel: FieldTasksViewModel = viewModel()) 
     OverviewSection(
         numOfOutstandingTasks = numOfOutstandingTasks
     )
-
-
 
 }
 
@@ -357,8 +363,6 @@ fun ProfilePictureContainer(
                 .border(2.dp, Color(0xffa4e8ef), CircleShape)
         )
 
-
-
     }
 
 }
@@ -373,8 +377,16 @@ fun BodyContent(
     height: Dp,
     message: String,
     from: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    username: String = "",
+    userViewModel: UserViewModel = viewModel()
 ) {
+
+    /* Retrieve User Data by using the nav args 'username' passed by Login Screen */
+    val user = userViewModel.getCurrentUserByName(username)
+
+    Log.d("[getUser-After]", "user2 = {$user}")
+
 
     // Qs:  How to make Column span the entire screen width?
     // Ans: By LocalConfiguration.current.screenWidthDp.dp
@@ -393,13 +405,16 @@ fun BodyContent(
 
     ) {
 
-        SalutationContainer(
-            modifier = Modifier
-                .background(Color(0xff00A19B))
-                .padding(
-                    top=20.dp
-                )
-        )
+        if (user != null) {
+            SalutationContainer(
+                user = user,
+                modifier = Modifier
+                    .background(Color(0xff00A19B))
+                    .padding(
+                        top=20.dp
+                    )
+            )
+        }
 
         QuickAccessBarContainer(
             onUserProfileButtonClicked = onUserProfileButtonClicked,
@@ -424,9 +439,6 @@ fun BodyContent(
             modifier = modifier
         )
 
-
-
-
     }
 
 
@@ -434,6 +446,7 @@ fun BodyContent(
 
 @Composable
 fun SalutationContainer(
+    user: User,
     modifier: Modifier = Modifier
 ){
 
@@ -456,12 +469,13 @@ fun SalutationContainer(
             )
 
             Text(
-                text = "John Doe",
+                text = user.name,
                 color = Color.White,
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.ExtraBold
 
             )
+
 
         }
 
