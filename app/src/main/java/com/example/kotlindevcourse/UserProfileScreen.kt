@@ -1,5 +1,6 @@
 package com.example.kotlindevcourse
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,12 +35,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlindevcourse.states.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun UserProfileScreen(navController: NavHostController) {
+fun UserProfileScreen(
+    navController: NavHostController,
+    fromHomeNavArgs_Username: String) {
+
+    var backStackEntry = navController.currentBackStackEntry
+    Log.d("[Curr BSEntry]", backStackEntry.toString())
+
+
 
     Scaffold(
         containerColor = Color.White,
@@ -135,15 +145,17 @@ fun UserProfileScreen(navController: NavHostController) {
 
             }
         }
-    ) {
 
-            innerPadding ->
+    ) { innerPadding ->
+
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
 
 
-            UserProfileContainer(modifier = Modifier)
+            UserProfileContainer(
+                username = fromHomeNavArgs_Username,
+                modifier = Modifier)
 
 
         }
@@ -154,117 +166,133 @@ fun UserProfileScreen(navController: NavHostController) {
 
 @Composable
 fun UserProfileContainer(
-    modifier: Modifier = Modifier
+    username: String,
+    modifier: Modifier = Modifier,
+    userViewModel: UserViewModel = viewModel()
 ){
 
+    val user: User? = userViewModel.getCurrentUserByName(username)
+
+
     /* Welcome Header */
-    Text(
-        text = "Welcome [Insert-Username-Here]",
-        style = MaterialTheme.typography.headlineLarge,
-        fontWeight = FontWeight.Bold,
-        color = Color.Black,
-        modifier = modifier.padding(20.dp)
-    )
+    user?.let {
 
-    /* User Details */
-    Column (
+        Text(
+            text = "Welcome ${user.name}",
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            modifier = modifier.padding(20.dp)
+        )
 
-    ){
-        /* Username Row */
-        Row(modifier = Modifier.padding(
-            top = 10.dp,
-            start = 20.dp,
-            end = 20.dp,
-            bottom = 0.dp
-        )){
+        /* User Details */
+        Column (
 
-            /* Instantiate Icon */
-            val usernameFieldIconImage = R.drawable.user_24
+        ){
+            /* Username Row */
+            Row(modifier = Modifier.padding(
+                top = 10.dp,
+                start = 20.dp,
+                end = 20.dp,
+                bottom = 0.dp
+            )){
 
-            /* Define Icon Class with Icon Image */
-            Icon(
-                painterResource(usernameFieldIconImage),
-                contentDescription = "Quick Access Button Prototype",
-                modifier = modifier.size(45.dp)
-            )
+                /* Instantiate Icon */
+                val usernameFieldIconImage = R.drawable.user_24
 
-            Text(
-                text = "John Doe",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Normal,
-                color = Color.Black,
-                modifier = modifier.padding(20.dp)
-            )
+                /* Define Icon Class with Icon Image */
+                Icon(
+                    painterResource(usernameFieldIconImage),
+                    contentDescription = "Quick Access Button Prototype",
+                    modifier = modifier.size(45.dp)
+                )
+
+                Text(
+                    text = user.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Black,
+                    modifier = modifier.padding(20.dp)
+                )
+
+            }
+
+            HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
+
+            /* Team Row */
+            Row(modifier = Modifier.padding(
+                top = 10.dp,
+                start = 20.dp,
+                end = 20.dp,
+                bottom = 0.dp
+            )){
+
+                /* Instantiate Icon */
+                val usernameFieldIconImage = R.drawable.groups_of_3
+
+                /* Define Icon Class with Icon Image */
+                Icon(
+                    painterResource(usernameFieldIconImage),
+                    contentDescription = "Quick Access Button Prototype",
+                    modifier = modifier.size(45.dp)
+                )
+
+                Text(
+                    text = user.department,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Black,
+                    modifier = modifier.padding(20.dp)
+                )
+
+
+
+            }
+
+            HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
+
+            /* Designation Row */
+            Row(modifier = Modifier.padding(
+                top = 10.dp,
+                start = 20.dp,
+                end = 20.dp,
+                bottom = 0.dp
+            )){
+
+                /* Instantiate Icon */
+                val usernameFieldIconImage = R.drawable.work
+
+                /* Define Icon Class with Icon Image */
+                Icon(
+                    painterResource(usernameFieldIconImage),
+                    contentDescription = "Quick Access Button Prototype",
+                    modifier = modifier.size(45.dp)
+                )
+
+                Text(
+                    text = user.designation,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Black,
+                    modifier = modifier.padding(20.dp)
+                )
+
+
+
+            }
+
+            HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
 
         }
-
-        HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
-
-        /* Team Row */
-        Row(modifier = Modifier.padding(
-            top = 10.dp,
-            start = 20.dp,
-            end = 20.dp,
-            bottom = 0.dp
-        )){
-
-            /* Instantiate Icon */
-            val usernameFieldIconImage = R.drawable.groups_of_3
-
-            /* Define Icon Class with Icon Image */
-            Icon(
-                painterResource(usernameFieldIconImage),
-                contentDescription = "Quick Access Button Prototype",
-                modifier = modifier.size(45.dp)
-            )
-
-            Text(
-                text = "Condition Monitoring Team",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Normal,
-                color = Color.Black,
-                modifier = modifier.padding(20.dp)
-            )
-
-
-
-        }
-
-        HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
-
-        /* Designation Row */
-        Row(modifier = Modifier.padding(
-            top = 10.dp,
-            start = 20.dp,
-            end = 20.dp,
-            bottom = 0.dp
-        )){
-
-            /* Instantiate Icon */
-            val usernameFieldIconImage = R.drawable.work
-
-            /* Define Icon Class with Icon Image */
-            Icon(
-                painterResource(usernameFieldIconImage),
-                contentDescription = "Quick Access Button Prototype",
-                modifier = modifier.size(45.dp)
-            )
-
-            Text(
-                text = "Sr. Asset Technician",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Normal,
-                color = Color.Black,
-                modifier = modifier.padding(20.dp)
-            )
-
-
-
-        }
-
-        HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
 
     }
+
+
+
+
+
+
+
 
 
 
@@ -274,6 +302,9 @@ fun UserProfileContainer(
 @Preview(showBackground = true)
 fun UserProfileScreenPreview(modifier: Modifier = Modifier){
 
-    UserProfileScreen(navController = rememberNavController())
+    UserProfileScreen(
+        navController = rememberNavController(),
+        fromHomeNavArgs_Username="username_here"
+    )
 
 }

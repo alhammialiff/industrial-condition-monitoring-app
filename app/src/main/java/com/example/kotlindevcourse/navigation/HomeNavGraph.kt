@@ -42,11 +42,40 @@ fun NavGraphBuilder.homeNavGraph(
             HomeScreen(
 
                 onUserProfileButtonClicked = {
-                    navController.navigate(Screen.Profile.route)
+
+                    if(username !== null)
+                        navController.navigate(
+                            route = Screen.Profile.route.replace(
+                                oldValue = "{username}",
+                                newValue = username
+                            )
+                        )
+                    else
+                        navController.navigate(
+                            route = Screen.Profile.route.replace(
+                                oldValue = "{username}",
+                                newValue = "null"
+                            )
+                        )
+
                 },
 
                 onNotificationButtonClicked = {
-                    navController.navigate(Screen.Notification.route)
+
+                    if(username !== null)
+                        navController.navigate(
+                            route = Screen.Notification.route + "/{username}".replace(
+                                oldValue = "{username}",
+                                newValue = username
+                            )
+                        )
+                    else
+                        navController.navigate(
+                            route = Screen.Notification.route + "/{username}".replace(
+                                oldValue = "{username}",
+                                newValue = "null"
+                            )
+                        )
                 },
 
                 onTaskCardClicked = navController,
@@ -69,11 +98,18 @@ fun NavGraphBuilder.homeNavGraph(
 
         /* (Sub-link 1) User Profile Route */
         composable(route = Screen.Profile.route){
-            UserProfileScreen(navController = navController)
+
+            val username = it.arguments?.getString("username")
+            UserProfileScreen(
+                navController = navController,
+                fromHomeNavArgs_Username = if (username !== null) username else ""
+            )
         }
 
         /* (Sub-link 2) Notification Route */
         composable(route = Screen.Notification.route){
+//            val username = it.arguments?.getString("username")
+
             NotificationScreen(navController = navController)
         }
 
