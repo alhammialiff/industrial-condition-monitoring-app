@@ -64,14 +64,14 @@ fun NavGraphBuilder.homeNavGraph(
 
                     if(username !== null)
                         navController.navigate(
-                            route = Screen.Notification.route + "/{username}".replace(
+                            route = Screen.Notification.route.replace(
                                 oldValue = "{username}",
                                 newValue = username
                             )
                         )
                     else
                         navController.navigate(
-                            route = Screen.Notification.route + "/{username}".replace(
+                            route = Screen.Notification.route.replace(
                                 oldValue = "{username}",
                                 newValue = "null"
                             )
@@ -108,9 +108,12 @@ fun NavGraphBuilder.homeNavGraph(
 
         /* (Sub-link 2) Notification Route */
         composable(route = Screen.Notification.route){
-//            val username = it.arguments?.getString("username")
+            val username = it.arguments?.getString("username")
 
-            NotificationScreen(navController = navController)
+            NotificationScreen(
+                navController = navController,
+                fromHomeNavArgs_Username = if (username !== null) username else ""
+            )
         }
 
         /* (Sub-link 3) Task Card (Task Detail Start) Route */

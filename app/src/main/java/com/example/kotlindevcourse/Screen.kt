@@ -22,7 +22,7 @@ sealed class Screen(val route: String){
     object Home: Screen(route = "home_screen")
     object Login: Screen(route = "login_screen")
     object Profile: Screen(route = "home_screen/profile_screen/{$USERNAME}")
-    object Notification: Screen(route = "home_screen/notification_screen")
+    object Notification: Screen(route = "home_screen/notification_screen/{$USERNAME}")
 //    object TaskDetailStart: Screen(route = "home_screen/task_detail")
 
     object TaskDetailStart: Screen(route = "home_screen/task_detail/{$TASK_ID}"){

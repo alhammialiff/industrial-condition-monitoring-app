@@ -28,13 +28,18 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType.Companion.Em
 import androidx.compose.ui.unit.TextUnitType.Companion.Sp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlindevcourse.states.UserViewModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationScreen(navController: NavHostController) {
+fun NotificationScreen(
+    navController: NavHostController,
+    fromHomeNavArgs_Username: String
+) {
 
     Scaffold(
         containerColor = Color.White,
@@ -138,7 +143,10 @@ fun NotificationScreen(navController: NavHostController) {
         ) {
 
 
-            NotificationScreenContainer(modifier = Modifier)
+            NotificationScreenContainer(
+                username = fromHomeNavArgs_Username,
+                modifier = Modifier
+            )
 
 
         }
@@ -149,7 +157,11 @@ fun NotificationScreen(navController: NavHostController) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun NotificationScreenContainer(modifier: Modifier = Modifier) {
+fun NotificationScreenContainer(
+    username: String,
+    modifier: Modifier = Modifier,
+    userViewModel: UserViewModel = viewModel()
+) {
 
     Column(
         modifier = modifier.padding(20.dp)
@@ -213,6 +225,8 @@ fun NotificationScreenPreview(
     modifier: Modifier = Modifier
 ){
 
-    NotificationScreen(navController = rememberNavController())
+    NotificationScreen(
+        navController = rememberNavController(),
+        fromHomeNavArgs_Username = "")
 
 }
