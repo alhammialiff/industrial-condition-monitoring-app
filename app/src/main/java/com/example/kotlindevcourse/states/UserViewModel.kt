@@ -3,7 +3,10 @@ package com.example.kotlindevcourse.states
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.kotlindevcourse.ActionItems
+import com.example.kotlindevcourse.FieldTask
 import com.example.kotlindevcourse.Screen
+import com.example.kotlindevcourse.TaskStep
 import com.example.kotlindevcourse.User
 
 open class UserViewModel: ViewModel() {
@@ -22,7 +25,83 @@ open class UserViewModel: ViewModel() {
             name = "Stephan Bodzin",
             department = "Electrical",
             designation = "Electrician",
-            actionItems = "[TODO]",
+            actionItems = ActionItems(
+                outstanding = mutableListOf(
+                    FieldTask(
+                        0,
+                        "Lube Oil Change",
+                        arrayOf(
+                            TaskStep(
+                                0,
+                                "Unscrew Oiler Cap from Oiler"
+                            ),
+                            TaskStep(
+                                1,
+                                "Refill Lube Oil till the Max line"
+                            ),
+                            TaskStep(
+                                2,
+                                "Screw Oiler Cap back onto Oiler"
+                            ),
+                        ),
+                        "23/07/2024",
+                        "Area A-2",
+                        "high",
+                        "Area B-4",
+                        false
+                    )
+                ),
+                ongoing = mutableListOf(
+                    FieldTask(
+                        1,
+                        "Check Pump Flow Rate",
+                        arrayOf(
+                            TaskStep(
+                                0,
+                                "Unscrew Oiler Cap from Oiler"
+                            ),
+                            TaskStep(
+                                1,
+                                "Refill Lube Oil till the Max line"
+                            ),
+                            TaskStep(
+                                2,
+                                "Screw Oiler Cap back onto Oiler"
+                            ),
+                        ),
+                        "23/07/2024",
+                        "Area B-1",
+                        "low",
+                        "Area B-4",
+                        false
+                    )
+                ),
+                completed = mutableListOf(
+                    FieldTask(
+                        2,
+                        "Examine Furnace",
+                        arrayOf(
+                            TaskStep(
+                                0,
+                                "Unscrew Oiler Cap from Oiler"
+                            ),
+                            TaskStep(
+                                1,
+                                "Refill Lube Oil till the Max line"
+                            ),
+                            TaskStep(
+                                2,
+                                "Screw Oiler Cap back onto Oiler"
+                            ),
+                        ),
+                        "23/07/2024",
+                        "Area A-1",
+                        "high",
+                        "Area B-2",
+                        true
+                    )
+                )
+            ),
             latestActivity = Screen.Home.route,
             lastLoggedIn = "[TODO]",
             lastLoggedOut = "[TODO]"
@@ -32,7 +111,84 @@ open class UserViewModel: ViewModel() {
             name = "Tadao Ando",
             department = "Facilities Management",
             designation = "Field Operator",
-            actionItems = "[TODO]",
+            actionItems = ActionItems(
+                outstanding = mutableListOf(
+                    FieldTask(
+                        4,
+                        "Examine Fire Extinguisher Rack",
+                        arrayOf(
+                            TaskStep(
+                                0,
+                                "Unscrew Oiler Cap from Oiler"
+                            ),
+                            TaskStep(
+                                1,
+                                "Refill Lube Oil till the Max line"
+                            ),
+                            TaskStep(
+                                2,
+                                "Screw Oiler Cap back onto Oiler"
+                            ),
+                        ),
+                        "23/07/2024",
+                        "Fire Truck Shed",
+                        "mid",
+                        "Fire Truck Shed",
+                        false
+                    )
+                ),
+                ongoing = mutableListOf(
+                    FieldTask(
+                        2,
+                        "Check Smart Pump Meter Reader",
+                        arrayOf(
+                            TaskStep(
+                                0,
+                                "Unscrew Oiler Cap from Oiler"
+                            ),
+                            TaskStep(
+                                1,
+                                "Refill Lube Oil till the Max line"
+                            ),
+                            TaskStep(
+                                2,
+                                "Screw Oiler Cap back onto Oiler"
+                            ),
+                        ),
+                        "23/07/2024",
+                        "Area C-1",
+                        "high",
+                        "Area C-1",
+                        false
+                    )
+                ),
+                completed = mutableListOf(
+                    FieldTask(
+                        2,
+                        "Examine Furnace",
+                        arrayOf(
+                            TaskStep(
+                                0,
+                                "Unscrew Oiler Cap from Oiler"
+                            ),
+                            TaskStep(
+                                1,
+                                "Refill Lube Oil till the Max line"
+                            ),
+                            TaskStep(
+                                2,
+                                "Screw Oiler Cap back onto Oiler"
+                            ),
+                        ),
+                        "23/07/2024",
+                        "Area C-5",
+                        "high",
+                        "Area C-5",
+                        true
+                    )
+                ),
+
+            ),
             latestActivity = Screen.Home.route,
             lastLoggedIn = "[TODO]",
             lastLoggedOut = "[TODO]"
@@ -42,7 +198,83 @@ open class UserViewModel: ViewModel() {
             name = "John Roti",
             department = "Process Operations",
             designation = "Process Technician",
-            actionItems = "[TODO]",
+            actionItems = ActionItems(
+                outstanding = mutableListOf(
+                    FieldTask(
+                        2,
+                        "Examine Pump Electrical DB",
+                        arrayOf(
+                            TaskStep(
+                                0,
+                                "Unscrew Oiler Cap from Oiler"
+                            ),
+                            TaskStep(
+                                1,
+                                "Refill Lube Oil till the Max line"
+                            ),
+                            TaskStep(
+                                2,
+                                "Screw Oiler Cap back onto Oiler"
+                            ),
+                        ),
+                        "23/07/2024",
+                        "Processing A - M2",
+                        "high",
+                        "Area D-1",
+                        false
+                    )
+                ),
+                ongoing = mutableListOf(
+                    FieldTask(
+                        2,
+                        "Examine Machine Line Current Stability",
+                        arrayOf(
+                            TaskStep(
+                                0,
+                                "Unscrew Oiler Cap from Oiler"
+                            ),
+                            TaskStep(
+                                1,
+                                "Refill Lube Oil till the Max line"
+                            ),
+                            TaskStep(
+                                2,
+                                "Screw Oiler Cap back onto Oiler"
+                            ),
+                        ),
+                        "23/07/2024",
+                        "Processing B M1",
+                        "high",
+                        "Area D-1",
+                        false
+                    )
+                ),
+                completed = mutableListOf(
+                    FieldTask(
+                        2,
+                        "Examine Machine Line Current Stability",
+                        arrayOf(
+                            TaskStep(
+                                0,
+                                "Unscrew Oiler Cap from Oiler"
+                            ),
+                            TaskStep(
+                                1,
+                                "Refill Lube Oil till the Max line"
+                            ),
+                            TaskStep(
+                                2,
+                                "Screw Oiler Cap back onto Oiler"
+                            ),
+                        ),
+                        "23/07/2024",
+                        "Processing B M4",
+                        "mid",
+                        "Area D-1",
+                        true
+                    )
+                )
+            ),
             latestActivity = Screen.Home.route,
             lastLoggedIn = "[TODO]",
             lastLoggedOut = "[TODO]"

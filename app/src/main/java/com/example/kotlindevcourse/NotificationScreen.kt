@@ -1,5 +1,6 @@
 package com.example.kotlindevcourse
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -163,6 +164,11 @@ fun NotificationScreenContainer(
     userViewModel: UserViewModel = viewModel()
 ) {
 
+    var user = userViewModel.getCurrentUserByName(username)
+    var outstandingNotification: MutableList<FieldTask>? = user?.actionItems?.outstanding
+
+    Log.d("[Notif - User Data]", user.toString())
+
     Column(
         modifier = modifier.padding(20.dp)
     ){
@@ -174,13 +180,14 @@ fun NotificationScreenContainer(
             Pair("Warning", "Maintenance in Progress @ Area B-4"),
             Pair("Info", "Lube Cup Replenishment @ Area B-3"),
         )
+
         FlowRow(
             horizontalArrangement = Arrangement.Start,
             modifier = modifier.padding()
         ){
 
             /* Iterate notifications into rows */
-            notifications.forEach { notification ->
+            /*notifications.forEach { notification ->
 
                     if(notification.first == "Info"){
 
@@ -207,6 +214,36 @@ fun NotificationScreenContainer(
                     )
 
                     HorizontalDivider()
+
+            }*/
+
+            outstandingNotification?.forEach{
+
+                if(it.priority == "high"){
+
+                    Icon(
+                        painterResource(id = R.drawable.warning_24dp),
+                        contentDescription = "Warning",
+                        modifier = Modifier.padding(10.dp)
+                    )
+
+                }else{
+
+                    Icon(
+                        painterResource(id = R.drawable.info_24dp),
+                        contentDescription = "Info",
+                        modifier = Modifier.padding(10.dp)
+                    )
+
+                }
+
+                Text(
+                    text = it.action + "@" + it.location,
+                    fontSize = TextUnit(18F, Sp),
+                    modifier = Modifier.padding(10.dp)
+                )
+
+                HorizontalDivider()
 
             }
         }

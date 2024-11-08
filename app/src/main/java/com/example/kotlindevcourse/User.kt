@@ -2,10 +2,11 @@ package com.example.kotlindevcourse
 
 data class User (
     var username: String,
+    /* To add profilePicture key-value pair later */
     var name: String,
     var department: String,
     var designation: String,
-    var actionItems: String,
+    var actionItems: ActionItems,
     var latestActivity: String,
     var lastLoggedIn: String,
     var lastLoggedOut: String
