@@ -1,6 +1,8 @@
 package com.example.kotlindevcourse
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,24 +17,35 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.example.kotlindevcourse.states.AuthenticationViewModel
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Composable
 fun LoginScreen(
@@ -54,6 +67,12 @@ fun LoginContainer(
     modifier: Modifier = Modifier,
     authenticationViewModel: AuthenticationViewModel = viewModel()
 ) {
+
+    val scope = rememberCoroutineScope()
+    val ctx = LocalContext.current
+    val loginResponse = remember {
+        mutableStateOf("")
+    }
 
     Column(
         horizontalAlignment = Alignment.Start,
@@ -167,6 +186,8 @@ fun LoginContainer(
         Button(
             onClick={
 
+                val authenticatingUser = AuthenticatingUser(usernameInput, passwordInput)
+
                 /* Navigation based on auth result
                 *
                 *  [06/11/2024] HOW DO WE PASS USERNAME DATA ON SUCCESSFUL AUTH?
@@ -179,13 +200,18 @@ fun LoginContainer(
                 *       solution is to pass username string data by appending it onto route
                 *       string.
                 * */
-                if(authenticationViewModel.getAuthResult()){
+
+                /* [UNCOMMENT TO ENABLE ACTUAL BACKEND LOGIN CALL]*/
+                performLogin(ctx, scope, authenticatingUser, loginResponse)
+
+                /* [UNCOMMENT TO ENABLE DUMMY AUTH] */
+                /*if(authenticationViewModel.getAuthResult()){
 
                     Log.d("[Auth Success]","Redirecting to Home")
 
-                    /* [To remember] We can pass string arg in nav route
+                    *//* [To remember] We can pass string arg in nav route
                     *                by performing concat and replace like below
-                    * */
+                    * *//*
                     navController.navigate(
                         route = Screen.Home.route + "/{username}".replace(
                             oldValue = "{username}",
@@ -197,7 +223,7 @@ fun LoginContainer(
                     Log.d("[Auth Success]","Redirecting to Login")
                     navController.navigate(route = Screen.Login.route)
 
-                }
+                }*/
 
             },
             modifier = modifier
@@ -215,6 +241,92 @@ fun LoginContainer(
     }
 
 }
+
+private fun performLogin(
+    context: Context,
+    scope: CoroutineScope,
+    authenticatingUser: AuthenticatingUser,
+    loginResponse: MutableState<String>
+) {
+    Log.d("[Login]", "Sending creds over /login: ${authenticatingUser}",)
+
+    scope.launch {
+        try {
+            val call: Call<AuthenticatingUser?>? = RetrofitInstance.loginService.login(authenticatingUser)
+
+            Log.d("[Sending POST Call]", call.toString())
+
+
+            call!!.enqueue(object : Callback<AuthenticatingUser?> {
+
+
+                /* Stop here: Cannot change call and response data type to LoginResponse
+                *             To dig
+                *
+                *  */
+                override fun onResponse(call: Call<AuthenticatingUser?>?, response: Response<AuthenticatingUser?>) {
+
+                    /* Display Toast */
+                    Toast.makeText(context, "Login sent", Toast.LENGTH_SHORT).show()
+
+                    val model: AuthenticatingUser? = response.body()
+
+                    val responseMessage = "Response Code: " + response.code() + "\n" + "Username:" + model!!
+
+                    Log.d("[Response - OK]", model.toString())
+
+
+                    loginResponse.value = responseMessage
+
+                }
+
+                override fun onFailure(call: Call<AuthenticatingUser?>?, t: Throwable){
+
+                    loginResponse.value = "HTTP POST Failure: " + t.message
+
+                    Log.d("[Response - FAIL]", t.message.toString())
+
+
+                }
+
+            })
+
+            /*call!!.enqueue(object : Callback<AuthenticatingUser?> {
+
+                *//* ON RESPONSE *//*
+                override fun onResponse(call: Call<DataModel?>?, response: Response<DataModel?>) {
+                    // this method is called when we get response from our api.
+                    Toast.makeText(ctx, "Data posted to API", Toast.LENGTH_SHORT).show()
+                    // we are getting a response from our body and
+                    // passing it to our model class.
+                    val model: DataModel? = response.body()
+                    // on below line we are getting our data from model class
+                    // and adding it to our string.
+                    val resp =
+                        "Response Code : " + response.code() + "\n" + "User Name : " + model!!.name + "\n" + "Job : " + model!!.job
+                    // below line we are setting our string to our response.
+                    result.value = resp
+                }
+
+                *//* ON FAILURE *//*
+                override fun onFailure(call: Call<DataModel?>?, t: Throwable) {
+                    // we get error response from API.
+                    result.value = "Error found is : " + t.message
+                }
+
+            })*/
+
+
+
+            // Handle the response
+        } catch (e: Exception) {
+            // Handle the error
+        }
+    }
+
+
+}
+
 
 @Preview(showBackground = true)
 @Composable

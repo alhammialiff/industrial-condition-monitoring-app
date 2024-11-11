@@ -23,6 +23,8 @@ open class UserViewModel: ViewModel() {
         User(
             username = "stephanbodzin",
             name = "Stephan Bodzin",
+            email = "stephan.bodzin@email.com",
+            role = "user",
             department = "Electrical",
             designation = "Electrician",
             actionItems = ActionItems(
@@ -109,6 +111,8 @@ open class UserViewModel: ViewModel() {
         User(
             username = "tadaoando",
             name = "Tadao Ando",
+            email = "tadao.ando@email.com",
+            role = "user",
             department = "Facilities Management",
             designation = "Field Operator",
             actionItems = ActionItems(
@@ -196,6 +200,8 @@ open class UserViewModel: ViewModel() {
         User(
             username = "johnroti",
             name = "John Roti",
+            email = "john.roti@email.com",
+            role = "user",
             department = "Process Operations",
             designation = "Process Technician",
             actionItems = ActionItems(
