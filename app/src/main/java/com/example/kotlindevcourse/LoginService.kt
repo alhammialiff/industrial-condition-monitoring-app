@@ -10,6 +10,6 @@ interface LoginService {
     @POST("login")
     fun login(
         @Body data: AuthenticatingUser
-    ): Call<AuthenticatingUser?>?
+    ): Call<LoginResponse?>?
 
 }

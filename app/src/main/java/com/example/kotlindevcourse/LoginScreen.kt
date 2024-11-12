@@ -242,6 +242,11 @@ fun LoginContainer(
 
 }
 
+
+/* Private module to launch coroutine and perform async operation
+*   Eg. Perform Login
+*   Source: https://medium.com/@kathankraithatha/how-to-use-api-in-jetpack-compose-10d11b8f166f
+* */
 private fun performLogin(
     context: Context,
     scope: CoroutineScope,
@@ -252,78 +257,47 @@ private fun performLogin(
 
     scope.launch {
         try {
-            val call: Call<AuthenticatingUser?>? = RetrofitInstance.loginService.login(authenticatingUser)
+            val call: Call<LoginResponse?>? = RetrofitInstance.loginService.login(authenticatingUser)
 
             Log.d("[Sending POST Call]", call.toString())
 
-
-            call!!.enqueue(object : Callback<AuthenticatingUser?> {
-
+            call!!.enqueue(object : Callback<LoginResponse?> {
 
                 /* Stop here: Cannot change call and response data type to LoginResponse
                 *             To dig
                 *
                 *  */
-                override fun onResponse(call: Call<AuthenticatingUser?>?, response: Response<AuthenticatingUser?>) {
+                override fun onResponse(call: Call<LoginResponse?>?, response: Response<LoginResponse?>) {
 
                     /* Display Toast */
                     Toast.makeText(context, "Login sent", Toast.LENGTH_SHORT).show()
 
-                    val model: AuthenticatingUser? = response.body()
+                    val model: LoginResponse? = response.body()
 
                     val responseMessage = "Response Code: " + response.code() + "\n" + "Username:" + model!!
 
                     Log.d("[Response - OK]", model.toString())
 
-
                     loginResponse.value = responseMessage
 
                 }
 
-                override fun onFailure(call: Call<AuthenticatingUser?>?, t: Throwable){
+                override fun onFailure(call: Call<LoginResponse?>?, t: Throwable){
 
                     loginResponse.value = "HTTP POST Failure: " + t.message
-
                     Log.d("[Response - FAIL]", t.message.toString())
-
 
                 }
 
             })
 
-            /*call!!.enqueue(object : Callback<AuthenticatingUser?> {
-
-                *//* ON RESPONSE *//*
-                override fun onResponse(call: Call<DataModel?>?, response: Response<DataModel?>) {
-                    // this method is called when we get response from our api.
-                    Toast.makeText(ctx, "Data posted to API", Toast.LENGTH_SHORT).show()
-                    // we are getting a response from our body and
-                    // passing it to our model class.
-                    val model: DataModel? = response.body()
-                    // on below line we are getting our data from model class
-                    // and adding it to our string.
-                    val resp =
-                        "Response Code : " + response.code() + "\n" + "User Name : " + model!!.name + "\n" + "Job : " + model!!.job
-                    // below line we are setting our string to our response.
-                    result.value = resp
-                }
-
-                *//* ON FAILURE *//*
-                override fun onFailure(call: Call<DataModel?>?, t: Throwable) {
-                    // we get error response from API.
-                    result.value = "Error found is : " + t.message
-                }
-
-            })*/
-
-
-
-            // Handle the response
+        // Handle the response
         } catch (e: Exception) {
+
             // Handle the error
+
         }
     }
-
 
 }
 
