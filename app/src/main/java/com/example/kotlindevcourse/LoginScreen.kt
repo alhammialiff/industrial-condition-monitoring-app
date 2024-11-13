@@ -41,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.example.kotlindevcourse.states.AuthenticationViewModel
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -201,9 +202,6 @@ fun LoginContainer(
                 *       string.
                 * */
 
-                /* [UNCOMMENT TO ENABLE ACTUAL BACKEND LOGIN CALL]*/
-                performLogin(ctx, scope, authenticatingUser, loginResponse)
-
                 /* [UNCOMMENT TO ENABLE DUMMY AUTH] */
                 /*if(authenticationViewModel.getAuthResult()){
 
@@ -224,6 +222,12 @@ fun LoginContainer(
                     navController.navigate(route = Screen.Login.route)
 
                 }*/
+
+                /* [UNCOMMENT TO ENABLE ACTUAL BACKEND LOGIN CALL]
+                *   Begin invoking async operation of HTTP POST /login
+                *
+                * */
+                performLogin(ctx, scope, authenticatingUser, loginResponse, navController, usernameInput)
 
             },
             modifier = modifier
@@ -251,21 +255,27 @@ private fun performLogin(
     context: Context,
     scope: CoroutineScope,
     authenticatingUser: AuthenticatingUser,
-    loginResponse: MutableState<String>
+    loginResponse: MutableState<String>,
+    navController: NavController,
+    usernameInput: String
 ) {
+
     Log.d("[Login]", "Sending creds over /login: ${authenticatingUser}",)
 
     scope.launch {
+
         try {
+
             val call: Call<LoginResponse?>? = RetrofitInstance.loginService.login(authenticatingUser)
 
             Log.d("[Sending POST Call]", call.toString())
 
             call!!.enqueue(object : Callback<LoginResponse?> {
 
-                /* Stop here: Cannot change call and response data type to LoginResponse
-                *             To dig
-                *
+                var authSuccess = false;
+
+                /*
+                *    onResponse will only trigger if HTTP Code returns 200-299
                 *  */
                 override fun onResponse(call: Call<LoginResponse?>?, response: Response<LoginResponse?>) {
 
@@ -274,18 +284,67 @@ private fun performLogin(
 
                     val model: LoginResponse? = response.body()
 
-                    val responseMessage = "Response Code: " + response.code() + "\n" + "Username:" + model!!
+                    /* Generally Auth Success is here */
+                    if(model !== null) {
 
-                    Log.d("[Response - OK]", model.toString())
+                        /* HTTP 200 - Auth Success */
+                        if(model.responseCode == 200){
 
-                    loginResponse.value = responseMessage
+                            val responseMessage = "Response Code: " + response.code() + "\n" + "Username:" + model!!
+                            val retrievedUsername = model.data?.username
+
+                            Log.d("[Response - OK]", model.toString())
+
+                            loginResponse.value = responseMessage
+
+                            /* Navigate to home */
+                            if(retrievedUsername != null){
+
+                                navController.navigate(
+                                    route = Screen.Home.route + "/{username}".replace(
+                                        oldValue = "{username}",
+                                        newValue = retrievedUsername
+                                    )
+                                )
+
+                            /* This is to handle a situation where HTTP Resp is 200 but data is returned empty */
+                            }else{
+
+                                /* If code hits here, there is a bug in the condition above */
+                                navController.navigate(route = Screen.Login.route)
+
+                            }
+
+
+                        /* HTTP xxx - Anything other than 200 is considered auth failure */
+                        }else{
+
+                            navController.navigate(route = Screen.Login.route)
+
+                        }
+
+
+                    /* Otherwise auth failure is generally here (need to test) */
+                    } else {
+
+                        Log.d("[Auth Failed]","Redirecting back to Login")
+
+                        navController.navigate(route = Screen.Login.route)
+
+                    }
+
+
+
 
                 }
 
+                /* onFailure call back is triggered on HTTP Error Code (400..,500)*/
                 override fun onFailure(call: Call<LoginResponse?>?, t: Throwable){
 
                     loginResponse.value = "HTTP POST Failure: " + t.message
                     Log.d("[Response - FAIL]", t.message.toString())
+
+                    navController.navigate(route = Screen.Login.route)
 
                 }
 
@@ -297,6 +356,7 @@ private fun performLogin(
             // Handle the error
 
         }
+
     }
 
 }
