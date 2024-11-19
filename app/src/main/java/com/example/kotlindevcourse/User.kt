@@ -1,5 +1,9 @@
 package com.example.kotlindevcourse
 
+import kotlinx.serialization.Serializable
+
+
+@Serializable
 data class User (
     var username: String,
     /* To add profilePicture key-value pair later */
@@ -8,7 +12,7 @@ data class User (
     var role: String,
     var department: String,
     var designation: String,
-    var actionItems: ActionItems,
+    var actionItems: ActionItems?,
     var latestActivity: String,
     var lastLoggedIn: String,
     var lastLoggedOut: String

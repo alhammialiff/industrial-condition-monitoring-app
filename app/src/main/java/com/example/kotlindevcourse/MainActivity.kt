@@ -22,23 +22,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlindevcourse.ui.theme.KotlinDevCourseTheme
 //import com.example.kotlindevcourse.navigation.RootNavGraph
 import com.example.kotlindevcourse.navigation.SetupNavGraph
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
 
     lateinit var navHostController: NavHostController
+    private lateinit var userDataStoreManager: UserDataStoreManager
 
 
     // The main()
@@ -46,6 +50,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        userDataStoreManager = UserDataStoreManager(this)
 
         enableEdgeToEdge()
 
@@ -61,6 +66,17 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    /*override fun onStop() {
+        super.onStop()
+
+        Log.d("[onDestroy]","Clearing Data Store...")
+
+        lifecycleScope.launch {
+            Log.d("[onDestroy]","Clearing Data Store...")
+            userDataStoreManager.clearDataStore()
+        }
+    }*/
 }
 
 

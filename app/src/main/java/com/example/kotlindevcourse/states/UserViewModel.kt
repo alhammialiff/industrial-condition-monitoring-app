@@ -1,6 +1,10 @@
 package com.example.kotlindevcourse.states
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.kotlindevcourse.ActionItems
@@ -8,6 +12,8 @@ import com.example.kotlindevcourse.FieldTask
 import com.example.kotlindevcourse.Screen
 import com.example.kotlindevcourse.TaskStep
 import com.example.kotlindevcourse.User
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 open class UserViewModel: ViewModel() {
 
@@ -287,7 +293,104 @@ open class UserViewModel: ViewModel() {
         ),
     )
 
-    private val _currentUser: MutableLiveData<User> = MutableLiveData<User>()
+    /* Will be initialize later when variable finally has value */
+    var _thisUser: MutableState<User> = mutableStateOf(User(
+        username = "",
+        name = "",
+        email = "",
+        role = "",
+        department = "",
+        designation = "",
+        actionItems = ActionItems(
+            outstanding = mutableListOf(
+                FieldTask(
+                    taskID = -1,
+                    action = "",
+                    taskSteps = arrayOf<TaskStep>(
+                        TaskStep(
+                            stepID = -1,
+                            description = "",
+                        )
+                    ),
+                    timestamp = "String",
+                    location = "String",
+                    priority = "String",
+                    taskFor = "",
+                    completed = false
+                )
+            ),
+            mutableListOf(
+                FieldTask(
+                    taskID = -1,
+                    action = "",
+                    taskSteps = arrayOf<TaskStep>(
+                        TaskStep(
+                            stepID = -1,
+                            description = "",
+                        )
+                    ),
+                    timestamp = "String",
+                    location = "String",
+                    priority = "String",
+                    taskFor = "",
+                    completed = false
+                )
+            ),
+            mutableListOf(
+                FieldTask(
+                    taskID = -1,
+                    action = "",
+                    taskSteps = arrayOf<TaskStep>(
+                        TaskStep(
+                            stepID = -1,
+                            description = "",
+                        )
+                    ),
+                    timestamp = "String",
+                    location = "String",
+                    priority = "String",
+                    taskFor = "",
+                    completed = false
+                )
+            )
+        ),
+        latestActivity = "",
+        lastLoggedOut = "",
+        lastLoggedIn = ""
+    ))
+    
+/*    var thisUser: User = User(
+        username = TODO(),
+        name = TODO(),
+        email = TODO(),
+        role = TODO(),
+        department = TODO(),
+        designation = TODO(),
+        actionItems = TODO(),
+        latestActivity = TODO(),
+        lastLoggedIn = TODO(),
+        lastLoggedOut = TODO()
+    )*/
+
+    private val _thisUser2 = MutableStateFlow<User?>(null)
+    val user2: StateFlow<User?> get() = _thisUser2
+
+    /* Set currently authed user data into this session */
+    fun setThisUser(thisUserData: User){
+
+        _thisUser2.value = thisUserData
+
+        Log.d("This User", _thisUser2.value.toString())
+
+    }
+
+    /* Get current authed user */
+    fun getThisUser(): User?{
+
+        return user2.value
+
+    }
+
 
     fun getCurrentUserByName(requestingUsername: String): User? {
 
@@ -310,17 +413,5 @@ open class UserViewModel: ViewModel() {
 
     }
 
-    fun addNewUser(newUser: User) {
-
-        userList.add(newUser)
-        Log.d("[Add New User", userList.toString())
-
-    }
-
-    fun setCurrentUser(currentUser: User): Unit {
-
-        _currentUser.value = currentUser
-
-    }
 
 }

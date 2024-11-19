@@ -33,6 +33,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -42,11 +45,15 @@ import androidx.navigation.navOptions
 import com.example.kotlindevcourse.states.AuthenticationViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import com.example.kotlindevcourse.states.UserViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 
 @Composable
 fun LoginScreen(
@@ -66,7 +73,8 @@ fun LoginScreen(
 fun LoginContainer(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    authenticationViewModel: AuthenticationViewModel = viewModel()
+    authenticationViewModel: AuthenticationViewModel = viewModel(),
+    userViewModel: UserViewModel = viewModel()
 ) {
 
     val scope = rememberCoroutineScope()
@@ -107,7 +115,6 @@ fun LoginContainer(
             .fillMaxWidth()
             .fillMaxHeight()
             .padding(20.dp)
-
 
     ){
 
@@ -227,7 +234,14 @@ fun LoginContainer(
                 *   Begin invoking async operation of HTTP POST /login
                 *
                 * */
-                performLogin(ctx, scope, authenticatingUser, loginResponse, navController, usernameInput)
+                performLogin(
+                    ctx,
+                    scope,
+                    authenticatingUser,
+                    loginResponse,
+                    navController,
+                    usernameInput,
+                    userViewModel)
 
             },
             modifier = modifier
@@ -257,7 +271,9 @@ private fun performLogin(
     authenticatingUser: AuthenticatingUser,
     loginResponse: MutableState<String>,
     navController: NavController,
-    usernameInput: String
+    usernameInput: String,
+    userViewModel: UserViewModel,
+    dataStoreManager: UserDataStoreManager = UserDataStoreManager(context)
 ) {
 
     Log.d("[Login]", "Sending creds over /login: ${authenticatingUser}",)
@@ -291,19 +307,37 @@ private fun performLogin(
                         if(model.responseCode == 200){
 
                             val responseMessage = "Response Code: " + response.code() + "\n" + "Username:" + model!!
-                            val retrievedUsername = model.data?.username
+                            val retrievedUser = model.data
+
+                            /* [WIP] Datastore Dev in progress */
+                            scope.launch {
+
+                                if (retrievedUser != null) {
+
+                                    Log.d("[Login - saving to datastore]", retrievedUser.toString())
+
+                                    val userSerialised = Json.encodeToString<User>(retrievedUser)
+
+                                    dataStoreManager.saveToDataStore(userSerialised)
+
+                                }
+
+                            }
 
                             Log.d("[Response - OK]", model.toString())
 
                             loginResponse.value = responseMessage
 
                             /* Navigate to home */
-                            if(retrievedUsername != null){
+                            if(retrievedUser?.username != null){
+
+                                /* Set authenticated user into this session user state */
+                                userViewModel.setThisUser(retrievedUser)
 
                                 navController.navigate(
                                     route = Screen.Home.route + "/{username}".replace(
                                         oldValue = "{username}",
-                                        newValue = retrievedUsername
+                                        newValue = retrievedUser.username
                                     )
                                 )
 

@@ -1,6 +1,17 @@
+
+/* PLUGIN VS DEPENDENCIES
+*
+*   It is a piece of code that extends the functionality of the Gradle build system.
+*   It is a way to change or modify the behaviour of the build process.
+*
+*   It is different to dependencies in that dependencies are tools or functionalities our
+*   project relies on.
+
+* * */
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.6.21"
 }
 
 android {
@@ -8,10 +19,20 @@ android {
     compileSdk = 34
 
     defaultConfig {
+
+        /* The ID of the application */
         applicationId = "com.example.kotlindevcourse"
+
+        /* The min version of the Android SDK requied to run the app */
         minSdk = 24
+
+        /* The target version of the Android SDK for the application*/
         targetSdk = 34
+
+        /* The version code of the application */
         versionCode = 1
+
+        /* The version name of the application */
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -64,13 +85,14 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 //    implementation(libs.androidx.navigation.safe.args.gradle.plugin)
+    implementation(libs.kotlinx.serialization.json.v162)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-    //
+    implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

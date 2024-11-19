@@ -1,5 +1,6 @@
 package com.example.kotlindevcourse
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -42,30 +43,38 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.kotlindevcourse.states.AuthenticationViewModel
 import com.example.kotlindevcourse.states.TasksViewModel
 import com.example.kotlindevcourse.states.UserViewModel
-import androidx.lifecycle.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.time.debounce
 
 //import com.example.kotlindevcourse.navigation.HomeScreenNav
 
@@ -369,6 +378,8 @@ fun ProfilePictureContainer(
 }
 
 //Composable Function that can be used by setContent()
+@OptIn(ExperimentalCoroutinesApi::class)
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun BodyContent(
     onUserProfileButtonClicked: () -> Unit,
@@ -380,13 +391,176 @@ fun BodyContent(
     from: String,
     modifier: Modifier = Modifier,
     username: String = "",
-    userViewModel: UserViewModel = viewModel()
+    userViewModel: UserViewModel = viewModel(),
+    userDataStoreManager: UserDataStoreManager = UserDataStoreManager(LocalContext.current),
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
 
-    /* Retrieve User Data by using the nav args 'username' passed by Login Screen */
-    val user = userViewModel.getCurrentUserByName(username)
+    /* [PRE-REST DUMMY DATA PROTOTYPE]
+    *   Retrieve User Data by using the nav args 'username' passed by Login Screen
+    *   username from route param is used to retrieve data based on the username.
+    *   The dummy data was stored in UserViewModel.
+    * */
+    /*  val user = userViewModel.getCurrentUserByName(username)*/
 
-    Log.d("[getUser-After]", "user2 = {$user}")
+
+
+    /* [COMMENTED - FAILED ATTEMPT #1 VAR]
+    *  User is defined as a MutableState<User>
+    *  This type is needed because user should be mutable.
+    *  That is why remember{} is used.
+    * */
+    /*val user = remember { mutableStateOf(
+        User(
+            username = "",
+            name = "",
+            email = "",
+            role = "",
+            department = "",
+            designation = "",
+            actionItems = ActionItems(
+                outstanding = mutableListOf(
+                    FieldTask(
+                        taskID = -1,
+                        action = "",
+                        taskSteps = arrayOf<TaskStep>(
+                            TaskStep(
+                                stepID = -1,
+                                description = "",
+                            )
+                        ),
+                        timestamp = "String",
+                        location = "String",
+                        priority = "String",
+                        taskFor = "",
+                        completed = false
+                    )
+                ),
+                mutableListOf(
+                    FieldTask(
+                        taskID = -1,
+                        action = "",
+                        taskSteps = arrayOf<TaskStep>(
+                            TaskStep(
+                                stepID = -1,
+                                description = "",
+                            )
+                        ),
+                        timestamp = "String",
+                        location = "String",
+                        priority = "String",
+                        taskFor = "",
+                        completed = false
+                    )
+                ),
+                mutableListOf(
+                    FieldTask(
+                        taskID = -1,
+                        action = "",
+                        taskSteps = arrayOf<TaskStep>(
+                            TaskStep(
+                                stepID = -1,
+                                description = "",
+                            )
+                        ),
+                        timestamp = "String",
+                        location = "String",
+                        priority = "String",
+                        taskFor = "",
+                        completed = false
+                    )
+                )
+            ),
+            latestActivity = "",
+            lastLoggedOut = "",
+            lastLoggedIn = ""
+            )
+        )
+    }*/
+
+    /* [WORKING SOLUTION]
+    *  Goals: To emit latest data from data store just once
+    *
+    *  How?:
+    *    (1) Wire up Flow with .asLiveData() and .distinctUntilChanged()
+    *    (2) 'Subscribe' to data by hooking up .observeAsState()
+    *
+    *  Where else can be implemented aside User Data?
+    *    - Training Module Progress
+    *    - User Settings
+    *
+    * */
+    val userDataFlow = remember {
+        userDataStoreManager.getFromDataStore()
+            .asLiveData()
+            .distinctUntilChanged()
+    }
+    val user by userDataFlow.observeAsState()
+
+
+    /*  [FAILED ATTEMPT #1 & #2]
+    *   This is supposed to retrieve data from data store
+    *   To retrieve data from data store, it needs to be in the coroutine scope
+    *   Thus, Launched Effect is used.
+    *
+    *   Why failed?:
+    *   - LaunchedEffect is only launched once at the first composition
+    *   - As a result, every time app reloads, only the previous data is retrieved
+    *
+    * */
+    /*    LaunchedEffect (Unit){
+
+        Log.d("LAUNCHED - Retrieving from Datastore", "")
+
+        userDataStoreManager.getFromDataStore()
+            .asLiveData()
+            .distinctUntilChanged()
+            .observe(lifecycleOwner){ retrievedUser ->
+            Log.d("LAUNCHED - Retrieve from Datastore", retrievedUser.toString())
+
+            if (retrievedUser != null) {
+                user.value = retrievedUser
+            }
+
+        }
+
+    }*/
+
+
+    /* [FAILED ATTEMPT #2]
+    *  This is supposed to resolve Failed Attempt #1 from data store
+    *
+    *  Why Failed?
+    *  - While it succeeds getting latest data, observe is stucked on a creation loop,
+    *    which causes data to be emitted infinitely. From the words of codeium...
+    *
+    *    So, why does Code Snippet #2 emit the latest data infinitely?
+    *    The reason is that observe is called every time the Composable function is recomposed,
+    *    which can happen multiple times during the lifetime of the Composable function.
+    *    Each time observe is called, it creates a new observer that observes the LiveData object
+    *    and calls the callback function whenever the LiveData object emits a new value.
+    *    Because distinctUntilChanged is used, the LiveData object will only emit a new value
+    *    if the data has changed, but because observe is called multiple times,
+    *    multiple observers are created, each of which will call the callback function whenever
+    *    the LiveData object emits a new value. This can cause the callback function to be called
+    *    multiple times, even if the data has not changed.
+    */
+    /*Log.d("LAUNCHED - Retrieving from Datastore", "")
+
+    userDataStoreManager.getFromDataStore()
+        .asLiveData()
+        .distinctUntilChanged()
+        .observe(LocalLifecycleOwner.current){ retrievedUser ->
+
+        if(retrievedUser != null){
+            user.value = retrievedUser
+        }
+
+    }*/
+
+
+
+    Log.d("[Home Screen - Retrieved User]", "user2 = {${user}}")
 
 
     // Qs:  How to make Column span the entire screen width?
@@ -406,16 +580,17 @@ fun BodyContent(
 
     ) {
 
-        if (user != null) {
+        user?.let {
             SalutationContainer(
-                user = user,
+                username = it.name,
                 modifier = Modifier
                     .background(Color(0xff00A19B))
                     .padding(
-                        top=20.dp
+                        top = 20.dp
                     )
             )
         }
+
 
         QuickAccessBarContainer(
             onUserProfileButtonClicked = onUserProfileButtonClicked,
@@ -447,7 +622,7 @@ fun BodyContent(
 
 @Composable
 fun SalutationContainer(
-    user: User,
+    username: String,
     modifier: Modifier = Modifier
 ){
 
@@ -469,13 +644,15 @@ fun SalutationContainer(
                 fontWeight = FontWeight.Bold
             )
 
-            Text(
-                text = user.name,
-                color = Color.White,
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.ExtraBold
+            if (username != null) {
+                Text(
+                    text = username,
+                    color = Color.White,
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.ExtraBold
 
-            )
+                )
+            }
 
 
         }
