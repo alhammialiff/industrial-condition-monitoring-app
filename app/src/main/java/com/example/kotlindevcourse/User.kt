@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class User (
+    var id: String,
     var username: String,
     /* To add profilePicture key-value pair later */
     var name: String,

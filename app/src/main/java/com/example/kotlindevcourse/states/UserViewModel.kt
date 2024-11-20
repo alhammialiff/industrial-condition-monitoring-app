@@ -27,6 +27,7 @@ open class UserViewModel: ViewModel() {
     *  */
     private var userList = mutableListOf(
         User(
+            id = "1111",
             username = "stephanbodzin",
             name = "Stephan Bodzin",
             email = "stephan.bodzin@email.com",
@@ -115,6 +116,7 @@ open class UserViewModel: ViewModel() {
             lastLoggedOut = "[TODO]"
         ),
         User(
+            id = "2222",
             username = "tadaoando",
             name = "Tadao Ando",
             email = "tadao.ando@email.com",
@@ -204,6 +206,7 @@ open class UserViewModel: ViewModel() {
             lastLoggedOut = "[TODO]"
         ),
         User(
+            id = "3333",
             username = "johnroti",
             name = "John Roti",
             email = "john.roti@email.com",
@@ -295,6 +298,7 @@ open class UserViewModel: ViewModel() {
 
     /* Will be initialize later when variable finally has value */
     var _thisUser: MutableState<User> = mutableStateOf(User(
+        id = "-1111",
         username = "",
         name = "",
         email = "",

@@ -396,14 +396,14 @@ fun BodyContent(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
 
+
+
     /* [PRE-REST DUMMY DATA PROTOTYPE]
     *   Retrieve User Data by using the nav args 'username' passed by Login Screen
     *   username from route param is used to retrieve data based on the username.
     *   The dummy data was stored in UserViewModel.
     * */
     /*  val user = userViewModel.getCurrentUserByName(username)*/
-
-
 
     /* [COMMENTED - FAILED ATTEMPT #1 VAR]
     *  User is defined as a MutableState<User>
@@ -491,10 +491,11 @@ fun BodyContent(
     *
     * */
     val userDataFlow = remember {
-        userDataStoreManager.getFromDataStore()
-            .asLiveData()
-            .distinctUntilChanged()
+            userDataStoreManager.getFromDataStore()
+                .asLiveData()
+                .distinctUntilChanged()
     }
+
     val user by userDataFlow.observeAsState()
 
 

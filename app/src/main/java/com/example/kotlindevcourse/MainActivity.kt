@@ -33,6 +33,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlindevcourse.exceptionHandler.ExceptionHandler
 import com.example.kotlindevcourse.ui.theme.KotlinDevCourseTheme
 //import com.example.kotlindevcourse.navigation.RootNavGraph
 import com.example.kotlindevcourse.navigation.SetupNavGraph
@@ -44,6 +45,10 @@ class MainActivity : ComponentActivity() {
     lateinit var navHostController: NavHostController
     private lateinit var userDataStoreManager: UserDataStoreManager
 
+    /* Set exception handler at the root because try and catch is not allowed in composables */
+    val exceptionHandler = ExceptionHandler()
+
+
 
     // The main()
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -51,6 +56,9 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         userDataStoreManager = UserDataStoreManager(this)
+
+        /* Invoke this exception handler instance as the default exception handler */
+        exceptionHandler.setAsDefaultExceptionHandler()
 
         enableEdgeToEdge()
 
