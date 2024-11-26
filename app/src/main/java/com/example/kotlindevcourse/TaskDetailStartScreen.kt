@@ -28,15 +28,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -47,16 +51,27 @@ import com.example.kotlindevcourse.states.TasksViewModel
 fun TaskDetailStartScreen(
     navController: NavHostController,
     TASK_ID: Int? = 0,
-    taskViewModel: TasksViewModel = viewModel()
-){
+    taskViewModel: TasksViewModel = viewModel(),
+    userDataStoreManager: UserDataStoreManager = UserDataStoreManager(LocalContext.current),
+    ){
 
     Log.d("Task Details - TASK_ID", TASK_ID.toString())
+
+    /* [26/11/2024 DATA STORE RETRIEVAL WIP]  */
+    val userDataFlow = remember {
+        userDataStoreManager.getFromDataStore()
+            .asLiveData()
+            .distinctUntilChanged()
+    }
+
+    val user by userDataFlow.observeAsState()
 
     /* Extract specific task by TASK_ID from Task View Model
     *   TASK_ID is the selected (clicked) Task Card's array index
     *
     * */
     val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)
+
 
     Log.d("specificTask", specificTask.toString())
 

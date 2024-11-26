@@ -12,6 +12,7 @@ import com.example.kotlindevcourse.FieldTask
 import com.example.kotlindevcourse.Screen
 import com.example.kotlindevcourse.TaskStep
 import com.example.kotlindevcourse.User
+import com.example.kotlindevcourse.User2
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -376,11 +377,16 @@ open class UserViewModel: ViewModel() {
         lastLoggedOut = TODO()
     )*/
 
-    private val _thisUser2 = MutableStateFlow<User?>(null)
-    val user2: StateFlow<User?> get() = _thisUser2
+    /* [Commented First] Because of conflicting TaskID datatype between model and DB*/
+    /*private val _thisUser2 = MutableStateFlow<User?>(null)*/
+    /*val user2: StateFlow<User?> get() = _thisUser2*/
+
+    private val _thisUser2 = MutableStateFlow<User2?>(null)
+    val user2: StateFlow<User2?> get() = _thisUser2
 
     /* Set currently authed user data into this session */
-    fun setThisUser(thisUserData: User){
+    /*fun setThisUser(thisUserData: User){*/
+    fun setThisUser(thisUserData: User2){
 
         _thisUser2.value = thisUserData
 
@@ -389,7 +395,8 @@ open class UserViewModel: ViewModel() {
     }
 
     /* Get current authed user */
-    fun getThisUser(): User?{
+    /*fun getThisUser(): User?{*/
+    fun getThisUser(): User2?{
 
         return user2.value
 

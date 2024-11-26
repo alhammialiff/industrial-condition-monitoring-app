@@ -86,7 +86,7 @@ class UserDataStoreManager(val context: Context) {
         )*/
 
         it[USER]?.let {
-            it1 -> Json.decodeFromString<User>(it1)
+            it1 -> Json.decodeFromString<User2>(it1)
         }
 
 

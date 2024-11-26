@@ -316,7 +316,10 @@ private fun performLogin(
 
                                     Log.d("[Login - saving to datastore]", retrievedUser.toString())
 
-                                    val userSerialised = Json.encodeToString<User>(retrievedUser)
+                                    /* [Commented First] Because of conflicting TaskID datatype between model and DB*/
+                                    /*val userSerialised = Json.encodeToString<User>(retrievedUser)*/
+
+                                    val userSerialised = Json.encodeToString<User2>(retrievedUser)
 
                                     dataStoreManager.saveToDataStore(userSerialised)
 
@@ -376,7 +379,7 @@ private fun performLogin(
                 override fun onFailure(call: Call<LoginResponse?>?, t: Throwable){
 
                     loginResponse.value = "HTTP POST Failure: " + t.message
-                    Log.d("[Response - FAIL]", t.message.toString())
+                    Log.d("[Login Response - FAIL]", t.message.toString())
 
                     navController.navigate(route = Screen.Login.route)
 

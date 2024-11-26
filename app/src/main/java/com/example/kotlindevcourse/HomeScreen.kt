@@ -496,7 +496,7 @@ fun BodyContent(
                 .distinctUntilChanged()
     }
 
-    val user by userDataFlow.observeAsState()
+    val user2 by userDataFlow.observeAsState()
 
 
     /*  [FAILED ATTEMPT #1 & #2]
@@ -561,7 +561,7 @@ fun BodyContent(
 
 
 
-    Log.d("[Home Screen - Retrieved User]", "user2 = {${user}}")
+    Log.d("[Home Screen - Retrieved User]", "user2 = {${user2}}")
 
 
     // Qs:  How to make Column span the entire screen width?
@@ -581,7 +581,7 @@ fun BodyContent(
 
     ) {
 
-        user?.let {
+        user2?.let {
             SalutationContainer(
                 username = it.name,
                 modifier = Modifier
@@ -611,7 +611,7 @@ fun BodyContent(
 
         TabContainer(
             selectedTabIndex = 1,
-            divider = {},
+            userData2 = user2,
             onTaskCardClicked = onTaskCardClicked,
             modifier = modifier
         )
@@ -898,7 +898,8 @@ class TabViewModel: ViewModel(){
 fun TabContainer(
     selectedTabIndex: Any,
     onTaskCardClicked: NavHostController,
-    divider: Any,
+    /*userData: User?,*/
+    userData2: User2?,
     modifier: Modifier = Modifier,
     tabViewModel: TabViewModel = viewModel(),
     taskViewModel: TasksViewModel = viewModel()
@@ -960,8 +961,11 @@ fun TabContainer(
 
         }
 
-        var iterableTaskList = taskMasterList.getAllTasks().listIterator()
+//        var iterableTaskList = taskMasterList.getAllTasks().listIterator()
         var iterableIndex: Int = 0
+
+        /* [26/11/2024 DATA STORE RETRIEVAL] */
+        var iterableTaskList = userData2?.actionItems?.outstanding?.listIterator()
 
         Column(
             modifier = Modifier
@@ -970,21 +974,23 @@ fun TabContainer(
 
         ){
 
-            for(task in iterableTaskList){
+            if (iterableTaskList != null) {
 
-                /* Tabs Contents */
-                TabContent(
+                for(task2 in iterableTaskList){
 
-                    canShowContent = isCompletedTabSelected,
-                    task = task,
-                    taskIndex = iterableIndex,
-                    onTaskCardClicked = onTaskCardClicked
+                    /* Tabs Contents */
+                    TabContent(
 
+                        canShowContent = isCompletedTabSelected,
+                        task2 = task2,
+                        taskIndex = iterableIndex,
+                        onTaskCardClicked = onTaskCardClicked
 
-                )
+                    )
 
-                iterableIndex++
+                    iterableIndex++
 
+                }
             }
 
         }
@@ -1059,7 +1065,8 @@ fun Tab(
 @Composable
 fun TabContent(
     canShowContent: Boolean,
-    task: FieldTask,
+    /*task: FieldTask,*/
+    task2: FieldTask2,
     taskIndex: Int,
     onTaskCardClicked: NavHostController,
     modifier: Modifier = Modifier
@@ -1096,7 +1103,8 @@ fun TabContent(
             * */
             onTaskCardClicked.navigate(
                 route = Screen.TaskDetailStart.passTaskIDandStepID(
-                    TASK_ID = task.taskID
+                    /*TASK_ID = task.taskID*/
+                    TASK_ID = 99
                 )
             )
 
@@ -1109,7 +1117,7 @@ fun TabContent(
         ){
 
             Text(
-                text = "#${taskIndex} ${task.action} (${task.priority})",
+                text = "#${taskIndex} ${task2.action} (${task2.priority})",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight(800),
                 modifier = modifier.padding(
@@ -1121,7 +1129,7 @@ fun TabContent(
             )
 
             Text(
-                text = "Location ${task.location}",
+                text = "Location ${task2.location}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight(400),
                 modifier = modifier.padding(
@@ -1133,7 +1141,7 @@ fun TabContent(
             )
 
             Text(
-                text = "${task.taskFor}",
+                text = "${task2.taskFor}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight(400),
                 modifier = modifier.padding(
@@ -1144,7 +1152,7 @@ fun TabContent(
                 )
             )
 
-            if(task.completed){
+            if(task2.completed){
 
                 Text(
                     text = "Completed",
