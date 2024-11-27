@@ -9,7 +9,7 @@ data class FieldTask2 (
 
     val taskID: String,
     val action: String,
-    val taskSteps: Array<TaskStep>,
+    val taskSteps: Array<TaskStep2>,
     val timestamp: String,
     val location: String,
     val priority: String,

@@ -35,9 +35,13 @@ fun NavGraphBuilder.taskTutorialNavGraph(
             route = Screen.TaskDetailStart.route,
             arguments = listOf(
                 /* [To pass to this route] TASK_ID */
-                navArgument(TASK_ID){
+                /*navArgument(TASK_ID){
                     type = NavType.IntType
                     defaultValue = 0
+                },*/
+                navArgument(TASK_ID){
+                    type = NavType.StringType
+                    defaultValue = "null"
                 },
 
         )){
@@ -46,7 +50,7 @@ fun NavGraphBuilder.taskTutorialNavGraph(
 
             TaskDetailStartScreen(
                 navController = navController,
-                TASK_ID = it.arguments?.getInt(TASK_ID, 0)
+                TASK_ID = it.arguments?.getString(TASK_ID,"null")
             )
 
         }
@@ -57,8 +61,8 @@ fun NavGraphBuilder.taskTutorialNavGraph(
             arguments = listOf(
                 /* [To pass to this route] TASK_ID */
                 navArgument(TASK_ID){
-                    type = NavType.IntType
-                    defaultValue = 0
+                    type = NavType.StringType
+                    defaultValue = "null"
                 },
 
                 /* [To pass to this route] STEP_ID */
@@ -77,7 +81,7 @@ fun NavGraphBuilder.taskTutorialNavGraph(
             /* Invoke Task Detail Step Screen */
             TaskDetailStepScreen(
                 navController = navController,
-                TASK_ID = it.arguments?.getInt(TASK_ID, 0),
+                TASK_ID = it.arguments?.getString(TASK_ID, "null"),
                 STEP_ID = it.arguments?.getInt(STEP_ID, 0),
             )
 
@@ -90,8 +94,8 @@ fun NavGraphBuilder.taskTutorialNavGraph(
             arguments = listOf(
                 /* [To pass to this route] TASK_ID */
                 navArgument(TASK_ID){
-                    type = NavType.IntType
-                    defaultValue = 0
+                    type = NavType.StringType
+                    defaultValue = "null"
                 }
             )
         ){
@@ -99,7 +103,7 @@ fun NavGraphBuilder.taskTutorialNavGraph(
             /* Invoke Task Detail Step Screen */
             TaskDetailCompleteScreen(
                 navController = navController,
-                TASK_ID = it.arguments?.getInt(TASK_ID, 0)
+                TASK_ID = it.arguments?.getString(TASK_ID, "null")
             )
 
         }

@@ -25,15 +25,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -43,7 +49,7 @@ import com.example.kotlindevcourse.states.TasksViewModel
 @Composable
 fun TaskDetailStepScreen(
     navController: NavController,
-    TASK_ID: Int?,
+    TASK_ID: String?,
     STEP_ID: Int?
 ){
 
@@ -183,16 +189,37 @@ fun TaskDetailStepScreen(
 @Composable
 fun TaskDetailStepScreenPageContainer(
     navController: NavController,
-    TASK_ID: Int?,
+    TASK_ID: String?,
     STEP_ID: Int?,
     modifier: Modifier = Modifier,
-    tasksViewModel: TasksViewModel = viewModel()
+    tasksViewModel: TasksViewModel = viewModel(),
+    userDataStoreManager: UserDataStoreManager = UserDataStoreManager(LocalContext.current)
 ){
 
-    var task = tasksViewModel.getInitTaskList().getTaskByIndex(TASK_ID!!)
+    /* [26/11/2024 DATA STORE RETRIEVAL WIP]  */
+    val userDataFlow = remember {
+        userDataStoreManager.getFromDataStore()
+            .asLiveData()
+            .distinctUntilChanged()
+    }
+
+    val user2 by userDataFlow.observeAsState()
+
+    /* Extract specific task by TASK_ID from Task View Model
+    *   TASK_ID is the selected (clicked) Task Card's array index
+    *
+    * */
+    /*val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)*/
+    val task: FieldTask2? = user2?.actionItems?.outstanding?.find { it.taskID == TASK_ID }
+
+    /*var task = tasksViewModel.getInitTaskList().getTaskByIndex(TASK_ID!!)*/
+
     var stepNum = STEP_ID?.plus(1)
     var stepTitle = "Step $stepNum"
-    Log.d("Task Step One", task.taskSteps[0].toString())
+
+    if (STEP_ID != null) {
+        task?.taskSteps?.get(STEP_ID)?.let { Log.d("Task Step One", it.toString()) }
+    }
 
     val lubeCupImage = painterResource(id = R.drawable.lube_oil_cup)
     val areaMapImage = painterResource(id = R.drawable.area_map)
@@ -254,11 +281,13 @@ fun TaskDetailStepScreenPageContainer(
         )
 
         /* Step Description goes here */
-        Text(
-            text = task.taskSteps[STEP_ID!!].description,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.SemiBold
-        )
+        if (task != null) {
+            Text(
+                text = task.taskSteps[STEP_ID!!].description,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
 
         /* TODO: Button Row */
         Row(
@@ -309,25 +338,30 @@ fun TaskDetailStepScreenPageContainer(
                 Button(
                     onClick = {
                         Log.d("STEP_ID", STEP_ID.toString())
-                        Log.d("Total Steps", task.taskSteps.size.toString())
+                        Log.d("Total Steps", task?.taskSteps?.size.toString())
 
-                        if(STEP_ID < task.taskSteps.size - 1){
+                        if (task != null) {
+                            if (STEP_ID != null) {
 
-                            navController.navigate(
-                                route = Screen.TaskDetailStep.passTaskIDandStepID(
-                                    TASK_ID = TASK_ID,
-                                    STEP_ID = STEP_ID + 1
-                                )
-                            )
+                                if(STEP_ID < task.taskSteps.size - 1){
 
-                        }else{
+                                    navController.navigate(
+                                        route = Screen.TaskDetailStep.passTaskIDandStepID(
+                                            TASK_ID = TASK_ID,
+                                            STEP_ID = STEP_ID + 1
+                                        )
+                                    )
 
-                            navController.navigate(
-                                route = Screen.TaskDetailComplete.passTaskIDandStepID(
-                                    TASK_ID = TASK_ID
-                                )
-                            )
+                                }else{
 
+                                    navController.navigate(
+                                        route = Screen.TaskDetailComplete.passTaskIDandStepID(
+                                            TASK_ID = TASK_ID
+                                        )
+                                    )
+
+                                }
+                            }
                         }
 
                     },
@@ -369,7 +403,7 @@ fun TaskDetailStepScreenPreview(modifier: Modifier = Modifier){
 
     TaskDetailStepScreen(
         navController = rememberNavController(),
-        TASK_ID = 99,
+        TASK_ID = "null",
         STEP_ID = 0
     )
 

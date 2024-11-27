@@ -34,6 +34,7 @@ fun NavGraphBuilder.homeNavGraph(
 
         // (Start Route Declaration) Home Route
         composable(
+            /*route = Screen.Home.route + "/{username}"*/
             route = Screen.Home.route + "/{username}"
         ){
 

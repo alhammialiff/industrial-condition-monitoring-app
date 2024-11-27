@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -50,7 +49,7 @@ import com.example.kotlindevcourse.states.TasksViewModel
 @Composable
 fun TaskDetailStartScreen(
     navController: NavHostController,
-    TASK_ID: Int? = 0,
+    TASK_ID: String?,
     taskViewModel: TasksViewModel = viewModel(),
     userDataStoreManager: UserDataStoreManager = UserDataStoreManager(LocalContext.current),
     ){
@@ -64,14 +63,16 @@ fun TaskDetailStartScreen(
             .distinctUntilChanged()
     }
 
-    val user by userDataFlow.observeAsState()
+    val user2 by userDataFlow.observeAsState()
 
     /* Extract specific task by TASK_ID from Task View Model
     *   TASK_ID is the selected (clicked) Task Card's array index
     *
     * */
-    val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)
-
+    /*val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)*/
+    val specificTask: FieldTask2? = user2?.actionItems?.outstanding?.find {
+        it.taskID == TASK_ID.toString()
+    }
 
     Log.d("specificTask", specificTask.toString())
 
@@ -94,11 +95,13 @@ fun TaskDetailStartScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 title = {
-                    Text(
-                        text= specificTask.action,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color( 0xffffffff)
-                    )
+                    if (specificTask != null) {
+                        Text(
+                            text= specificTask.action,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color( 0xffffffff)
+                        )
+                    }
                 }
 
             )
@@ -190,12 +193,14 @@ fun TaskDetailStartScreen(
             modifier = Modifier.padding(innerPadding)
         ){
 
-            TaskDetailStartScreenPageContainer(
-                navController =  navController,
-                specificTask = specificTask,
-                TASK_ID = TASK_ID,
-                modifier = Modifier
-            )
+            if (TASK_ID != null) {
+                TaskDetailStartScreenPageContainer(
+                    navController =  navController,
+                    specificTask = specificTask,
+                    TASK_ID = TASK_ID,
+                    modifier = Modifier
+                )
+            }
 
         }
     }
@@ -208,18 +213,21 @@ fun TaskDetailStartScreen(
 @Composable
 fun TaskDetailStartScreenPageContainer(
     navController: NavHostController,
-    specificTask: FieldTask,
-    TASK_ID: Int,
+    specificTask: FieldTask2?,
+    TASK_ID: String,
     modifier: Modifier = Modifier,
     tasksViewModel: TasksViewModel = viewModel()
 ){
 
     /* Extract Task based on TASK_ID (i.e index of task selected by user) */
-    val taskMasterList = tasksViewModel.getInitTaskList().getAllTasks()
+    /*val taskMasterList = tasksViewModel.getInitTaskList().getAllTasks()
     var selectedTask = taskMasterList[TASK_ID]
     Log.d("[Tut Start]taskMasterList", taskMasterList.toString())
+    */
 
-    Log.d("[Tut Start]SELECTEDTASK", selectedTask.toString())
+
+
+    /*Log.d("[Tut Start]SELECTEDTASK", selectedTask.toString())*/
 
     val lubeCupImage = painterResource(id = R.drawable.lube_oil_cup)
     val areaMapImage = painterResource(id = R.drawable.area_map)
@@ -249,21 +257,23 @@ fun TaskDetailStartScreenPageContainer(
                 shape = RoundedCornerShape(30.dp),
                 modifier = Modifier
             ) {
-                Image(
-                    painter = lubeCupImage,
-                    contentDescription = specificTask.action,
-                    contentScale = ContentScale.FillWidth,
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 30.dp,
-                                topEnd = 30.dp,
-                                bottomStart = 30.dp,
-                                bottomEnd = 30.dp
+                if (specificTask != null) {
+                    Image(
+                        painter = lubeCupImage,
+                        contentDescription = specificTask.action,
+                        contentScale = ContentScale.FillWidth,
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 30.dp,
+                                    topEnd = 30.dp,
+                                    bottomStart = 30.dp,
+                                    bottomEnd = 30.dp
+                                )
                             )
-                        )
-                )
+                    )
+                }
             }
 
         }
@@ -276,11 +286,13 @@ fun TaskDetailStartScreenPageContainer(
             .padding(20.dp)
 
     ){
-        Text(
-            text = specificTask.action,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.ExtraBold
-        )
+        if (specificTask != null) {
+            Text(
+                text = specificTask.action,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.ExtraBold
+            )
+        }
 
         /* Training Overview Card */
         Column(
@@ -459,7 +471,8 @@ fun TaskDetailStartScreenPageContainer(
 fun TaskDetailStartScreenPreview(modifier: Modifier = Modifier){
 
     TaskDetailStartScreen(
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        TASK_ID = "null"
     )
 
 }

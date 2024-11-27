@@ -31,16 +31,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -50,8 +54,9 @@ import com.example.kotlindevcourse.states.TasksViewModel
 @Composable
 fun TaskDetailCompleteScreen(
     navController: NavHostController,
-    TASK_ID: Int? = 0,
-    taskViewModel: TasksViewModel = viewModel()
+    TASK_ID: String? = "null",
+    taskViewModel: TasksViewModel = viewModel(),
+    userDataStoreManager: UserDataStoreManager = UserDataStoreManager(LocalContext.current)
 ){
 
     Log.d("Task Details Complete - TASK_ID", TASK_ID.toString())
@@ -60,12 +65,29 @@ fun TaskDetailCompleteScreen(
     *   TASK_ID is the selected (clicked) Task Card's array index
     *
     * */
-    val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)
+    /*val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)*/
 
-    Log.d("specificTask", specificTask.toString())
+    /*Log.d("specificTask", specificTask.toString())*/
+
+    /* [26/11/2024 DATA STORE RETRIEVAL WIP]  */
+    val userDataFlow = remember {
+        userDataStoreManager.getFromDataStore()
+            .asLiveData()
+            .distinctUntilChanged()
+    }
+
+    val user2 by userDataFlow.observeAsState()
+
+    /* Extract specific task by TASK_ID from Task View Model
+    *   TASK_ID is the selected (clicked) Task Card's array index
+    *
+    * */
+    /*val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)*/
+    val specificTask: FieldTask2? = user2?.actionItems?.outstanding?.find { it.taskID == TASK_ID }
 
     /* [Debug] Current Nav Route */
     val currentRoute = navController.currentBackStackEntry?.destination?.route
+    Log.d("user2", user2.toString())
     Log.d("CURRENT ROUTE", currentRoute.toString())
 
     /* Set page structure using Scaffold */
@@ -83,11 +105,13 @@ fun TaskDetailCompleteScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 title = {
-                    Text(
-                        text= specificTask.action,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color( 0xffffffff)
-                    )
+                    if (specificTask != null) {
+                        Text(
+                            text= specificTask.action,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color( 0xffffffff)
+                        )
+                    }
                 }
 
             )
@@ -182,6 +206,8 @@ fun TaskDetailCompleteScreen(
             TaskDetailCompleteScreenPageContainer(
                 navController =  navController,
                 TASK_ID = TASK_ID,
+                task = specificTask,
+                user2 = user2,
                 modifier = Modifier
             )
 
@@ -196,17 +222,19 @@ fun TaskDetailCompleteScreen(
 @Composable
 fun TaskDetailCompleteScreenPageContainer(
     navController: NavHostController,
-    TASK_ID: Int,
+    TASK_ID: String?,
+    task: FieldTask2?,
+    user2: User2?,
     modifier: Modifier = Modifier,
     tasksViewModel: TasksViewModel = viewModel()
 ){
 
     /* Extract Task based on TASK_ID (i.e index of task selected by user) */
-    val taskMasterList = tasksViewModel.getInitTaskList().getAllTasks()
+    /*val taskMasterList = tasksViewModel.getInitTaskList().getAllTasks()
     var selectedTask = taskMasterList[TASK_ID]
     Log.d("[Tut Complete] taskMasterList", taskMasterList.toString())
 
-    Log.d("[Tut Complete] SELECTEDTASK", selectedTask.toString())
+    Log.d("[Tut Complete] SELECTEDTASK", selectedTask.toString())*/
 
     /*
     *   Extract Task Title (action) and display it in the congratulatory message
@@ -251,17 +279,19 @@ fun TaskDetailCompleteScreenPageContainer(
             )
 
             /* Task Name */
-            Text(
-                text = selectedTask.action,
-                style = MaterialTheme.typography.headlineSmall,
-                color = Color.White,
-                fontWeight = FontWeight(800),
-                textAlign = TextAlign.Center,
-                modifier = modifier
-                    .align(
-                        alignment = Alignment.CenterHorizontally
-                    )
-            )
+            if (task != null) {
+                Text(
+                    text = task.action,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White,
+                    fontWeight = FontWeight(800),
+                    textAlign = TextAlign.Center,
+                    modifier = modifier
+                        .align(
+                            alignment = Alignment.CenterHorizontally
+                        )
+                )
+            }
 
             /* Congratulatory Message */
             Text(
@@ -290,11 +320,23 @@ fun TaskDetailCompleteScreenPageContainer(
                 )
                 .fillMaxHeight()
         ){
+
+            user2?.let { Log.d("user2", it.username) }
+
             Button(
                 onClick = {
-                    navController.navigate(
+                    /*navController.navigate(
                         route = Screen.Home.route
-                    )
+                    )*/
+
+                    if (user2 != null) {
+                        navController.navigate(
+                            route = Screen.Home.route + "/{username}".replace(
+                                oldValue = "{username}",
+                                newValue = "stephanbodzin"
+                            )
+                        )
+                    }
                 },
                 modifier = modifier
                     .fillMaxWidth()

@@ -28,7 +28,7 @@ sealed class Screen(val route: String){
     object TaskDetailStart: Screen(route = "home_screen/task_detail/{$TASK_ID}"){
 
         fun passTaskIDandStepID(
-            TASK_ID: Int
+            TASK_ID: String,
         ): String{
             return "home_screen/task_detail/$TASK_ID"
         }
@@ -38,7 +38,7 @@ sealed class Screen(val route: String){
     object TaskDetailStep: Screen(route = "home_screen/task_detail/{$TASK_ID}/step/{$STEP_ID}"){
 
         fun passTaskIDandStepID(
-            TASK_ID: Int,
+            TASK_ID: String?,
             STEP_ID: Int
         ): String{
             return "home_screen/task_detail/$TASK_ID/step/$STEP_ID"
@@ -49,7 +49,7 @@ sealed class Screen(val route: String){
     object TaskDetailComplete: Screen(route = "home_screen/task_detail/{$TASK_ID}/complete"){
 
         fun passTaskIDandStepID(
-            TASK_ID: Int
+            TASK_ID: String?
         ): String{
             return "home_screen/task_detail/$TASK_ID/complete"
         }
