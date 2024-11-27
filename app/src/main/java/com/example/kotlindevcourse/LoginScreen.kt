@@ -33,21 +33,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navOptions
 import com.example.kotlindevcourse.states.AuthenticationViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.example.kotlindevcourse.states.UserViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -103,7 +95,7 @@ fun LoginContainer(
             text="Sign in to continue",
             style = MaterialTheme.typography.titleLarge,
             color = Color(0xff00A19B)
-            )
+        )
 
     }
 
@@ -319,7 +311,7 @@ private fun performLogin(
                                     /* [Commented First] Because of conflicting TaskID datatype between model and DB*/
                                     /*val userSerialised = Json.encodeToString<User>(retrievedUser)*/
 
-                                    val userSerialised = Json.encodeToString<User2>(retrievedUser)
+                                    val userSerialised = Json.encodeToString<User>(retrievedUser)
 
                                     dataStoreManager.saveToDataStore(userSerialised)
 
@@ -337,6 +329,7 @@ private fun performLogin(
                                 /* Set authenticated user into this session user state */
                                 userViewModel.setThisUser(retrievedUser)
 
+                                /* Navigate to Home Route appended with username */
                                 navController.navigate(
                                     route = Screen.Home.route + "/{username}".replace(
                                         oldValue = "{username}",

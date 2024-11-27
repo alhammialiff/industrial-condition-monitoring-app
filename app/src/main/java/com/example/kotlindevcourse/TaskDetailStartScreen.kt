@@ -49,32 +49,32 @@ import com.example.kotlindevcourse.states.TasksViewModel
 @Composable
 fun TaskDetailStartScreen(
     navController: NavHostController,
-    TASK_ID: String?,
+    taskID: String?,
     taskViewModel: TasksViewModel = viewModel(),
     userDataStoreManager: UserDataStoreManager = UserDataStoreManager(LocalContext.current),
     ){
 
-    Log.d("Task Details - TASK_ID", TASK_ID.toString())
+    Log.d("Task Details - taskID", taskID.toString())
 
-    /* [26/11/2024 DATA STORE RETRIEVAL WIP]  */
+    /* [DATA RETRIEVAL FROM PERSISTENT DATA STORE] */
     val userDataFlow = remember {
         userDataStoreManager.getFromDataStore()
             .asLiveData()
             .distinctUntilChanged()
     }
 
-    val user2 by userDataFlow.observeAsState()
+    val userData by userDataFlow.observeAsState()
 
     /* Extract specific task by TASK_ID from Task View Model
     *   TASK_ID is the selected (clicked) Task Card's array index
     *
     * */
     /*val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)*/
-    val specificTask: FieldTask2? = user2?.actionItems?.outstanding?.find {
-        it.taskID == TASK_ID.toString()
+    val task: Task? = userData?.allTasks?.outstanding?.find {
+        it.taskID == taskID.toString()
     }
 
-    Log.d("specificTask", specificTask.toString())
+    Log.d("specificTask", task.toString())
 
     /* [Debug] Current Nav Route */
     val currentRoute = navController.currentBackStackEntry?.destination?.route
@@ -95,12 +95,16 @@ fun TaskDetailStartScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 title = {
-                    if (specificTask != null) {
+                    
+                    /* Non-nullable check of action item before rendering Text composable */
+                    if (task != null) {
+
                         Text(
-                            text= specificTask.action,
+                            text= task.action,
                             fontWeight = FontWeight.ExtraBold,
                             color = Color( 0xffffffff)
                         )
+
                     }
                 }
 
@@ -193,11 +197,11 @@ fun TaskDetailStartScreen(
             modifier = Modifier.padding(innerPadding)
         ){
 
-            if (TASK_ID != null) {
+            if (taskID != null) {
                 TaskDetailStartScreenPageContainer(
                     navController =  navController,
-                    specificTask = specificTask,
-                    TASK_ID = TASK_ID,
+                    task = task,
+                    taskID = taskID,
                     modifier = Modifier
                 )
             }
@@ -213,21 +217,20 @@ fun TaskDetailStartScreen(
 @Composable
 fun TaskDetailStartScreenPageContainer(
     navController: NavHostController,
-    specificTask: FieldTask2?,
-    TASK_ID: String,
+    task: Task?,
+    taskID: String,
     modifier: Modifier = Modifier,
     tasksViewModel: TasksViewModel = viewModel()
 ){
 
-    /* Extract Task based on TASK_ID (i.e index of task selected by user) */
-    /*val taskMasterList = tasksViewModel.getInitTaskList().getAllTasks()
-    var selectedTask = taskMasterList[TASK_ID]
-    Log.d("[Tut Start]taskMasterList", taskMasterList.toString())
+    /* [LOCAL KOTLIN ENV DUMMY DATA]
+    *   Extract Task based on TASK_ID (i.e index of task selected by user)
+    * */
+    /*
+        val taskMasterList = tasksViewModel.getInitTaskList().getAllTasks()
+        var selectedTask = taskMasterList[TASK_ID]
+        Log.d("[Tut Start]taskMasterList", taskMasterList.toString())
     */
-
-
-
-    /*Log.d("[Tut Start]SELECTEDTASK", selectedTask.toString())*/
 
     val lubeCupImage = painterResource(id = R.drawable.lube_oil_cup)
     val areaMapImage = painterResource(id = R.drawable.area_map)
@@ -235,7 +238,6 @@ fun TaskDetailStartScreenPageContainer(
     /* Retrieve Task based on saved current index that was set when user clicked
     *  the Task Card in Home Screen
     * */
-
     Box(
         modifier = modifier
             .background(Color(0xff00A19B))
@@ -257,10 +259,10 @@ fun TaskDetailStartScreenPageContainer(
                 shape = RoundedCornerShape(30.dp),
                 modifier = Modifier
             ) {
-                if (specificTask != null) {
+                if (task != null) {
                     Image(
                         painter = lubeCupImage,
-                        contentDescription = specificTask.action,
+                        contentDescription = task.action,
                         contentScale = ContentScale.FillWidth,
                         modifier = modifier
                             .fillMaxWidth()
@@ -286,9 +288,9 @@ fun TaskDetailStartScreenPageContainer(
             .padding(20.dp)
 
     ){
-        if (specificTask != null) {
+        if (task != null) {
             Text(
-                text = specificTask.action,
+                text = task.action,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold
             )
@@ -428,7 +430,7 @@ fun TaskDetailStartScreenPageContainer(
                     onClick = {
                         navController.navigate(
                             route = Screen.TaskDetailStep.passTaskIDandStepID(
-                                TASK_ID = TASK_ID,
+                                TASK_ID = taskID,
                                 STEP_ID = 0
                             )
                         )
@@ -472,7 +474,7 @@ fun TaskDetailStartScreenPreview(modifier: Modifier = Modifier){
 
     TaskDetailStartScreen(
         navController = rememberNavController(),
-        TASK_ID = "null"
+        taskID = "null"
     )
 
 }

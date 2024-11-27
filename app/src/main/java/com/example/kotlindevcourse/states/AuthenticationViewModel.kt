@@ -1,20 +1,8 @@
 package com.example.kotlindevcourse.states
 
-import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.Snapshot.Companion.withMutableSnapshot
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.saveable
 import com.example.kotlindevcourse.AuthenticatingUser
-import com.example.kotlindevcourse.User
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 /*class AuthenticationViewModel(savedStateHandle: SavedStateHandle): ViewModel() {
 

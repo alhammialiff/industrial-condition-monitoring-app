@@ -5,17 +5,13 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -23,20 +19,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -61,33 +53,31 @@ fun TaskDetailCompleteScreen(
 
     Log.d("Task Details Complete - TASK_ID", TASK_ID.toString())
 
-    /* Extract specific task by TASK_ID from Task View Model
+    /* [LOCAL KOTLIN ENV DUMMY DATA] Extract specific task by TASK_ID from Task View Model
     *   TASK_ID is the selected (clicked) Task Card's array index
     *
     * */
     /*val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)*/
-
     /*Log.d("specificTask", specificTask.toString())*/
 
-    /* [26/11/2024 DATA STORE RETRIEVAL WIP]  */
+    /* [DATA RETRIEVAL FROM PERSISTENT DATA STORE] */
     val userDataFlow = remember {
         userDataStoreManager.getFromDataStore()
             .asLiveData()
             .distinctUntilChanged()
     }
-
-    val user2 by userDataFlow.observeAsState()
+    val userData by userDataFlow.observeAsState()
 
     /* Extract specific task by TASK_ID from Task View Model
     *   TASK_ID is the selected (clicked) Task Card's array index
     *
     * */
     /*val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)*/
-    val specificTask: FieldTask2? = user2?.actionItems?.outstanding?.find { it.taskID == TASK_ID }
+    val task: Task? = userData?.allTasks?.outstanding?.find { it.taskID == TASK_ID }
 
     /* [Debug] Current Nav Route */
     val currentRoute = navController.currentBackStackEntry?.destination?.route
-    Log.d("user2", user2.toString())
+    Log.d("userData", userData.toString())
     Log.d("CURRENT ROUTE", currentRoute.toString())
 
     /* Set page structure using Scaffold */
@@ -105,9 +95,9 @@ fun TaskDetailCompleteScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 title = {
-                    if (specificTask != null) {
+                    if (task != null) {
                         Text(
-                            text= specificTask.action,
+                            text= task.action,
                             fontWeight = FontWeight.ExtraBold,
                             color = Color( 0xffffffff)
                         )
@@ -206,8 +196,8 @@ fun TaskDetailCompleteScreen(
             TaskDetailCompleteScreenPageContainer(
                 navController =  navController,
                 TASK_ID = TASK_ID,
-                task = specificTask,
-                user2 = user2,
+                task = task,
+                userData = userData,
                 modifier = Modifier
             )
 
@@ -223,8 +213,8 @@ fun TaskDetailCompleteScreen(
 fun TaskDetailCompleteScreenPageContainer(
     navController: NavHostController,
     TASK_ID: String?,
-    task: FieldTask2?,
-    user2: User2?,
+    task: Task?,
+    userData: User?,
     modifier: Modifier = Modifier,
     tasksViewModel: TasksViewModel = viewModel()
 ){
@@ -321,15 +311,13 @@ fun TaskDetailCompleteScreenPageContainer(
                 .fillMaxHeight()
         ){
 
-            user2?.let { Log.d("user2", it.username) }
+            userData?.let { Log.d("user2", it.username) }
 
             Button(
                 onClick = {
-                    /*navController.navigate(
-                        route = Screen.Home.route
-                    )*/
 
-                    if (user2 != null) {
+                    /* If userData is available, perform route back to Home */
+                    if (userData != null) {
                         navController.navigate(
                             route = Screen.Home.route + "/{username}".replace(
                                 oldValue = "{username}",

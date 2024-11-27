@@ -37,11 +37,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,7 +59,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -70,11 +66,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.kotlindevcourse.states.TasksViewModel
 import com.example.kotlindevcourse.states.UserViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.time.debounce
 
 //import com.example.kotlindevcourse.navigation.HomeScreenNav
 
@@ -405,7 +396,7 @@ fun BodyContent(
     * */
     /*  val user = userViewModel.getCurrentUserByName(username)*/
 
-    /* [COMMENTED - FAILED ATTEMPT #1 VAR]
+    /* [DATA RETRIEVAL FROM PERSISTENT DATA STORE - FAILED ATTEMPT #1 VAR]
     *  User is defined as a MutableState<User>
     *  This type is needed because user should be mutable.
     *  That is why remember{} is used.
@@ -478,7 +469,7 @@ fun BodyContent(
         )
     }*/
 
-    /* [WORKING SOLUTION]
+    /* [DATA RETRIEVAL FROM PERSISTENT DATA STORE (WORKING SOLUTION)]
     *  Goals: To emit latest data from data store just once
     *
     *  How?:
@@ -496,10 +487,10 @@ fun BodyContent(
                 .distinctUntilChanged()
     }
 
-    val user2 by userDataFlow.observeAsState()
+    val userData by userDataFlow.observeAsState()
 
 
-    /*  [FAILED ATTEMPT #1 & #2]
+    /*  [DATA RETRIEVAL FROM PERSISTENT DATA STORE - FAILED ATTEMPT #1 & #2]
     *   This is supposed to retrieve data from data store
     *   To retrieve data from data store, it needs to be in the coroutine scope
     *   Thus, Launched Effect is used.
@@ -528,7 +519,7 @@ fun BodyContent(
     }*/
 
 
-    /* [FAILED ATTEMPT #2]
+    /* [DATA RETRIEVAL FROM PERSISTENT DATA STORE - FAILED ATTEMPT #2]
     *  This is supposed to resolve Failed Attempt #1 from data store
     *
     *  Why Failed?
@@ -561,7 +552,7 @@ fun BodyContent(
 
 
 
-    Log.d("[Home Screen - Retrieved User]", "user2 = {${user2}}")
+    Log.d("[Home Screen - Retrieved User]", "user2 = {${userData}}")
 
 
     // Qs:  How to make Column span the entire screen width?
@@ -581,7 +572,7 @@ fun BodyContent(
 
     ) {
 
-        user2?.let {
+        userData?.let {
             SalutationContainer(
                 username = it.name,
                 modifier = Modifier
@@ -611,7 +602,7 @@ fun BodyContent(
 
         TabContainer(
             selectedTabIndex = 1,
-            userData2 = user2,
+            userData = userData,
             onTaskCardClicked = onTaskCardClicked,
             modifier = modifier
         )
@@ -899,7 +890,7 @@ fun TabContainer(
     selectedTabIndex: Any,
     onTaskCardClicked: NavHostController,
     /*userData: User?,*/
-    userData2: User2?,
+    userData: User?,
     modifier: Modifier = Modifier,
     tabViewModel: TabViewModel = viewModel(),
     taskViewModel: TasksViewModel = viewModel()
@@ -965,7 +956,7 @@ fun TabContainer(
         var iterableIndex: Int = 0
 
         /* [26/11/2024 DATA STORE RETRIEVAL] */
-        var iterableTaskList = userData2?.actionItems?.outstanding?.listIterator()
+        var iterableTaskList = userData?.allTasks?.outstanding?.listIterator()
 
         Column(
             modifier = Modifier
@@ -976,13 +967,13 @@ fun TabContainer(
 
             if (iterableTaskList != null) {
 
-                for(task2 in iterableTaskList){
+                for(task in iterableTaskList){
 
                     /* Tabs Contents */
                     TabContent(
 
                         canShowContent = isCompletedTabSelected,
-                        task2 = task2,
+                        task = task,
                         taskIndex = iterableIndex,
                         onTaskCardClicked = onTaskCardClicked
 
@@ -1066,7 +1057,7 @@ fun Tab(
 fun TabContent(
     canShowContent: Boolean,
     /*task: FieldTask,*/
-    task2: FieldTask2,
+    task: Task,
     taskIndex: Int,
     onTaskCardClicked: NavHostController,
     modifier: Modifier = Modifier
@@ -1086,10 +1077,6 @@ fun TabContent(
 
 ){
 
-
-
-//    Log.d("task.taskID",task.taskID.toString())
-//    Log.d("task.taskSteps[taskIndex].stepID",task.taskSteps[taskIndex-1].stepID.toString())
     Surface(
         shadowElevation = 5.dp,
         shape = RoundedCornerShape(12.dp),
@@ -1103,8 +1090,9 @@ fun TabContent(
             * */
             onTaskCardClicked.navigate(
                 route = Screen.TaskDetailStart.passTaskIDandStepID(
-                    /*TASK_ID = task.taskID*/
-                    TASK_ID = task2.taskID
+
+                    TASK_ID = task.taskID
+
                 )
             )
 
@@ -1117,7 +1105,7 @@ fun TabContent(
         ){
 
             Text(
-                text = "#${taskIndex} ${task2.action} (${task2.priority})",
+                text = "#${taskIndex} ${task.action} (${task.priority})",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight(800),
                 modifier = modifier.padding(
@@ -1129,7 +1117,7 @@ fun TabContent(
             )
 
             Text(
-                text = "Location ${task2.location}",
+                text = "Location ${task.location}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight(400),
                 modifier = modifier.padding(
@@ -1141,7 +1129,7 @@ fun TabContent(
             )
 
             Text(
-                text = "${task2.taskFor}",
+                text = task.taskFor,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight(400),
                 modifier = modifier.padding(
@@ -1152,7 +1140,7 @@ fun TabContent(
                 )
             )
 
-            if(task2.completed){
+            if(task.completed){
 
                 Text(
                     text = "Completed",

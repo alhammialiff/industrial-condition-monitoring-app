@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 
 /* [Field Task Data Model] */
 @Serializable
-data class FieldTask2 (
+data class FieldTaskToDelete (
 
-    val taskID: String,
+    val taskID: Int,
     val action: String,
-    val taskSteps: Array<TaskStep2>,
+    val taskStepToDeletes: Array<TaskStepToDelete>,
     val timestamp: String,
     val location: String,
     val priority: String,

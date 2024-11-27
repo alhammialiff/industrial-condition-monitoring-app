@@ -1,14 +1,10 @@
 package com.example.kotlindevcourse.states
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.kotlindevcourse.FieldTask
-import com.example.kotlindevcourse.TaskStep
+import com.example.kotlindevcourse.FieldTaskToDelete
+import com.example.kotlindevcourse.TaskStepToDelete
 import com.example.kotlindevcourse.TaskList
 
 /*
@@ -24,24 +20,24 @@ class TasksViewModel: ViewModel(){
     *
     *  Data takes the form of TaskList class
     *  */
-    var fieldTaskList = TaskList(
+    var fieldTaskToDeleteList = TaskList(
 
         /* Data is prepared here */
         mutableListOf(
 
-            FieldTask(
+            FieldTaskToDelete(
                 0,
                 "Lube Oil Change",
                 arrayOf(
-                    TaskStep(
+                    TaskStepToDelete(
                         0,
                         "Unscrew Oiler Cap from Oiler"
                     ),
-                    TaskStep(
+                    TaskStepToDelete(
                         1,
                         "Refill Lube Oil till the Max line"
                     ),
-                    TaskStep(
+                    TaskStepToDelete(
                         2,
                         "Screw Oiler Cap back onto Oiler"
                     ),
@@ -52,19 +48,19 @@ class TasksViewModel: ViewModel(){
                 "Area B-4",
                 false
             ),
-            FieldTask(
+            FieldTaskToDelete(
                 1,
                 "Check Pump Flow Rate",
                 arrayOf(
-                    TaskStep(
+                    TaskStepToDelete(
                         0,
                         "Unscrew Oiler Cap from Oiler"
                     ),
-                    TaskStep(
+                    TaskStepToDelete(
                         1,
                         "Refill Lube Oil till the Max line"
                     ),
-                    TaskStep(
+                    TaskStepToDelete(
                         2,
                         "Screw Oiler Cap back onto Oiler"
                     ),
@@ -75,19 +71,19 @@ class TasksViewModel: ViewModel(){
                 "Area B-4",
                 false
             ),
-            FieldTask(
+            FieldTaskToDelete(
                 2,
                 "Examine Furnace",
                 arrayOf(
-                    TaskStep(
+                    TaskStepToDelete(
                         0,
                         "Unscrew Oiler Cap from Oiler"
                     ),
-                    TaskStep(
+                    TaskStepToDelete(
                         1,
                         "Refill Lube Oil till the Max line"
                     ),
-                    TaskStep(
+                    TaskStepToDelete(
                         2,
                         "Screw Oiler Cap back onto Oiler"
                     ),
@@ -110,7 +106,7 @@ class TasksViewModel: ViewModel(){
     // Accessible data to be passed over as index to access TaskList
     private val currentTaskIndex: Int? = _currentTaskIndex.value
 
-    var taskMasterList: TaskList = fieldTaskList
+    var taskMasterList: TaskList = fieldTaskToDeleteList
 
     /* State handler to send initial data down to composable */
     fun getInitTaskList(): TaskList {
@@ -138,7 +134,7 @@ class TasksViewModel: ViewModel(){
 
 
     /* State handler to retrieve specific task by index of Task Card (i.e currentTaskIndex) */
-    fun getTaskByCurrentIndex(TASK_ID: Int): FieldTask{
+    fun getTaskByCurrentIndex(TASK_ID: Int): FieldTaskToDelete{
 
         var specificFieldTask = taskMasterList.getTaskByIndex(TASK_ID)
 

@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 
 /* [Field Task Data Model] */
 @Serializable
-data class FieldTask (
+data class Task (
 
-    val taskID: Int,
+    val taskID: String,
     val action: String,
     val taskSteps: Array<TaskStep>,
     val timestamp: String,

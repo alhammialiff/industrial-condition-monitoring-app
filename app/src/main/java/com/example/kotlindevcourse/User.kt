@@ -2,7 +2,6 @@ package com.example.kotlindevcourse
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class User (
     var id: String,
@@ -13,7 +12,7 @@ data class User (
     var role: String,
     var department: String,
     var designation: String,
-    var actionItems: ActionItems?,
+    var allTasks: AllTasks?,
     var latestActivity: String,
     var lastLoggedIn: String,
     var lastLoggedOut: String

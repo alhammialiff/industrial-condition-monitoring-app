@@ -210,7 +210,7 @@ fun TaskDetailStepScreenPageContainer(
     *
     * */
     /*val specificTask: FieldTask = taskViewModel.getTaskByCurrentIndex(TASK_ID!!)*/
-    val task: FieldTask2? = user2?.actionItems?.outstanding?.find { it.taskID == TASK_ID }
+    val task: Task? = user2?.allTasks?.outstanding?.find { it.taskID == TASK_ID }
 
     /*var task = tasksViewModel.getInitTaskList().getTaskByIndex(TASK_ID!!)*/
 

@@ -7,9 +7,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.example.kotlindevcourse.HOME_GRAPH_ROUTE
-import com.example.kotlindevcourse.HomeScreen
-import com.example.kotlindevcourse.NotificationScreen
 import com.example.kotlindevcourse.STEP_ID
 import com.example.kotlindevcourse.Screen
 import com.example.kotlindevcourse.TASK_ID
@@ -17,7 +14,6 @@ import com.example.kotlindevcourse.TASK_TUTORIAL_ROUTE
 import com.example.kotlindevcourse.TaskDetailCompleteScreen
 import com.example.kotlindevcourse.TaskDetailStartScreen
 import com.example.kotlindevcourse.TaskDetailStepScreen
-import com.example.kotlindevcourse.UserProfileScreen
 
 fun NavGraphBuilder.taskTutorialNavGraph(
     navController: NavHostController
@@ -50,7 +46,7 @@ fun NavGraphBuilder.taskTutorialNavGraph(
 
             TaskDetailStartScreen(
                 navController = navController,
-                TASK_ID = it.arguments?.getString(TASK_ID,"null")
+                taskID = it.arguments?.getString(TASK_ID,"null")
             )
 
         }

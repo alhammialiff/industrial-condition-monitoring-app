@@ -1,7 +1,6 @@
 package com.example.kotlindevcourse
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 
 /* [TaskList Data Model]
 *  Allows accessing the mutable list like a normal array
@@ -9,18 +8,18 @@ import androidx.lifecycle.LiveData
 *  */
 open class TaskList {
 
-    var tasklist: MutableList<FieldTask>
+    var tasklist: MutableList<FieldTaskToDelete>
     var taskIndex: Int = 0
 
-    constructor(fieldTaskList: MutableList<FieldTask>) {
+    constructor(fieldTaskToDeleteList: MutableList<FieldTaskToDelete>) {
 
-        this.tasklist = fieldTaskList
+        this.tasklist = fieldTaskToDeleteList
 
     }
 
     /* TODO - Get task list */
     /* Get all task */
-    fun getAllTasks(): MutableList<FieldTask>{
+    fun getAllTasks(): MutableList<FieldTaskToDelete>{
 
 //        Log.d("Task List getTask()", "Value - " + this.tasklist);
 
@@ -30,7 +29,7 @@ open class TaskList {
     }
 
     /* Get a specific task by its index */
-    fun getTaskByIndex(index: Int): FieldTask{
+    fun getTaskByIndex(index: Int): FieldTaskToDelete{
 
         Log.d("5. Task List getTaskByIndex()", "Value - " + this.tasklist[index]);
 
@@ -39,10 +38,10 @@ open class TaskList {
     }
 
     /* TODO - Set Task */
-    fun setTask(fieldTask: FieldTask){
+    fun setTask(fieldTaskToDelete: FieldTaskToDelete){
 
         /* Add task */
-        this.tasklist.add(taskIndex, fieldTask)
+        this.tasklist.add(taskIndex, fieldTaskToDelete)
 
         /* Increment index after add */
         this.taskIndex++
